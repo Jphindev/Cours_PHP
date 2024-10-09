@@ -1,0 +1,5 @@
+Dans cette nouvelle section, nous allons apprendre à manipuler des fichiers en PHP.
+
+Nous allons ainsi apprendre à ouvrir et lire un fichier déjà
+existant ou à créer des fichiers de différents formats (fichiers textes, etc.)
+grâce aux fonctions PHP et à écrire des informations dedans.
