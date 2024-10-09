@@ -1273,6 +1273,7 @@ class Admin extends User{
 }
 ______________________________*/
 
+//
 ////////// LES CONSTANTES DE CLASSE
 
 // self:: on utilise la constante à l'intérieur de la classe
@@ -1355,12 +1356,13 @@ $lucabo->getNom();
 echo ' : ';
 $lucabo->getPrixAbo();
 echo '<br>';
-echo AdminAbo->test123;
+
+//
+////////// LES PROPRIÉTÉS ET MÉTHODES STATIQUES
 
 //
 //
 ?>
 
-		<p>Un paragraphe</p>
 	</body>
 </html>
