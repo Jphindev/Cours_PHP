@@ -17,6 +17,58 @@ abstract class UserAbs
   {
     echo $this->prix_abo;
   }
+
+  //Méthodes magiques
+
+  public function __call($methode, $arg)
+  {
+    echo 'Méthode ' .
+      $methode .
+      ' inaccessible depuis un contexte objet.
+		<br>Arguments passés : ' .
+      implode(', ', $arg) .
+      '<br>';
+  }
+  public static function __callStatic($methode, $arg)
+  {
+    echo 'Méthode ' .
+      $methode .
+      ' inaccessible depuis un contexte statique.
+		<br>Arguments passés : ' .
+      implode(', ', $arg) .
+      '<br>';
+  }
+
+  public function __get($prop)
+  {
+    echo 'Propriété ' . $prop . ' inaccessible.<br>';
+  }
+  public function __set($prop, $valeur)
+  {
+    echo 'Impossible de mettre à jour la valeur de ' .
+      $prop .
+      ' avec "' .
+      $valeur .
+      '" (propriété inaccessible)';
+  }
+
+  public function __toString()
+  {
+    return 'Nom d\'utilisateur : ' .
+      $this->user_name .
+      '<br>
+		Prix de l\'abonnement : ' .
+      $this->prix_abo .
+      '<br><br>';
+  }
+
+  public function __invoke($arg)
+  {
+    echo 'Un objet a été utilisé comme une fonction.
+		<br>Argument passé : ' .
+      $arg .
+      '<br><br>';
+  }
 }
 
 //

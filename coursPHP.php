@@ -1504,10 +1504,103 @@ echo '<br>';
 //si les méthodes doivent être implémentées de manières différentes -> interface
 
 //
-////////// LES MÉTHODES MAGIQUES
+////////// LES MÉTHODES MAGIQUES (appelées automatiquement)
 
 //// __construct() et __destruct()
 
+//Le constructeur est utile pour initialiser les valeurs dont un objet a besoin dès sa création et avant toute utilisation de celui-ci. Il est appelé dès qu’on va instancier une classe.
+//Le destructeur va nous servir à « nettoyer » le code en détruisant un objet une fois qu’on a fini de l’utiliser. Utile pour sauvegarder des dernières valeurs de l’objet dans une base de données, fermer la connexion à une base de données, etc. juste avant que celui-ci soit détruit.
+
+//// __call() et __callStatic()
+
+//appelées si une méthode est innaccessible dans un contexte objet ou static
+
+/*__ utilisateur.class.php _____
+abstract class UserAbs 
+{
+  public function __call($methode, $arg){
+		echo 'Méthode ' .$methode. ' inaccessible depuis un contexte objet.
+		<br>Arguments passés : ' .implode(', ', $arg). '<br>';
+	}
+	public static function __callStatic($methode, $arg){
+		echo 'Méthode ' .$methode. ' inaccessible depuis un contexte statique.
+		<br>Arguments passés : ' .implode(', ', $arg). '<br>';
+...
+______________________________*/
+
+echo '<br>';
+$marcAdminAbs->test1('argument1');
+AdminAbs::test2('arg1', 'arg2');
+echo '<br>';
+
+//// __get(), __set(), __isset() et __unset()
+
+//__get() s'exécute si on tente d’accéder à une propriété inaccessible
+//__set() s’exécute dès qu’on tente de créer une propriété inaccessible
+
+/*__ utilisateur.class.php _____
+abstract class UserAbs 
+{
+  public function __get($prop){
+		echo 'Propriété ' .$prop. ' inaccessible.<br>';
+	}
+	public function __set($prop, $valeur){
+		echo 'Impossible de mettre à jour la valeur de ' .$prop. ' avec "'
+		.$valeur. '" (propriété inaccessible)';
+...
+______________________________*/
+
+$marcAdminAbs->prixAbo; //inaccessible car protected
+$marcAdminAbs->prixAbo = 20;
+echo '<br><br>';
+
+//__isset() s’exécute lorsque les fonctions isset(variable définie ou NULL?) ou empty(variable vide?) sont appelées sur des propriétés inaccessibles.
+//__unset() s’exécute lorsque la fonction unset(détruit une variable) est appelée sur des propriétés inaccessibles.
+
+//// __toString()
+
+//appelée quand on va traiter un objet comme une chaine de caractères
+
+/*__ utilisateur.class.php _____
+abstract class UserAbs 
+{
+  public function __toString(){
+		return 'Nom d\'utilisateur : ' .$this->user_name. '<br>
+		Prix de l\'abonnement : ' .$this->prix_abo. '<br><br>';
+...
+______________________________*/
+
+echo $marcAdminAbs;
+
+//on echo un objet qui va être transformé en string
+
+////__invoke()
+
+//s'exécute quand on tente d’appeler un objet comme une fonction
+
+/*__ utilisateur.class.php _____
+abstract class UserAbs 
+{
+  public function __invoke($arg){
+		echo 'Un objet a été utilisé comme une fonction.
+		<br>Argument passé : ' .$arg. '<br><br>';
+...
+______________________________*/
+
+$marcAdminAbs(1234);
+
+//// __clone()
+
+//s’exécute dès que l’on crée un clone d’un objet pour le nouvel objet créé.
+
+/////////////////////////////////////////////////////////////
+?>
+<!-- --------------------- -->
+<h2>PHP: NOTIONS AVANCÉES</h2>
+<!-- --------------------- -->
+<?php
+//
+////////// CHAINAGE DE MÉTHODES
 //
 //
 ?>
