@@ -1088,7 +1088,7 @@ if (isset($_POST['pass'])) {
 /////////////////////////////////////////////////////////////
 ?>
 <!-- ---------------------------------------------------------- -->
-<h2 id="signet">LES CONCEPTS DE BASE DE LA PROGRAMMATION ORIENTÉ OBJET PHP</h2>
+<h2>LES CONCEPTS DE BASE DE LA PROGRAMMATION ORIENTÉ OBJET PHP</h2>
 <!-- ---------------------------------------------------------- -->
 <?php
 //
@@ -1360,9 +1360,44 @@ echo '<br>';
 //
 ////////// LES PROPRIÉTÉS ET MÉTHODES STATIQUES
 
+// Une propriété statique est une propriété dont la valeur va pouvoir être modifiée et qui va être partagée par tous les objets de la classe.
+// On ne peut pas accéder à une propriété statique depuis un objet avec -> mais avec ::
+
+/*__ admin.class.php ___________
+class AdminAbo extends UserAbo
+{
+  protected static $ban; //static pour que la variable soit partagée à tous les objets de la classe AdminAbo
+	public function setBan(...$b) //pour accepter un nombre variable d'arguments
+  {
+    foreach($b as $banned){
+			self::$ban[] .= $banned; //$ban appartient maintenant à une classe et plus à un objet en particulier
+		}
+  }
+  public function getBan()
+  {
+    echo 'Utilisateurs bannis: ';
+    foreach (self::$ban as $valeur) { //on utilise ici aussi l'opérateur de résolution de portée ::
+      echo $valeur . ', ';
+    }
+  }
+	...
+}
+______________________________*/
+
+//Marc et Julie sont Admin, Luc est simple utilisateur
+$marcadminabo->setBan('Titouan', 'Engène');
+$julieadminabo->setBan('Estelle');
+$marcadminabo->getBan(); //Utilisateurs bannis: Titouan, Engène, Estelle,
+echo '<br>';
+$julieadminabo->getBan(); //pareil car $ban est partagé
+echo '<br>';
+
+//
+////////// LES MÉTHODES ET CLASSES ABSTRAITES
+
 //
 //
 ?>
-
+		<p id="signet">Signet</p>
 	</body>
 </html>
