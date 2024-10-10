@@ -1217,9 +1217,7 @@ class Admin extends User{
     echo "Utilisateurs bannis par " . $this->user_name . " : ";
     foreach ($this->ban as $valeur) {
       echo $valeur . ", ";
-    }
-  }
-}
+...
 ______________________________*/
 
 $philadmin->setBan('Gontran'); //on bannit Gontran
@@ -1240,9 +1238,7 @@ class Admin extends User{
 	public function __construct($n, $p){ //on surcharge la méthode __construct
 		$this->user_name = strtoupper($n); //nom directement en majuscule
 		$this->user_pass = $p;
-	}
-	...
-}
+...
 ______________________________*/
 
 echo $philadmin->getNom() . '<br>'; //PHIL en majuscule car $philadmin est un objet de classe Admin
@@ -1269,8 +1265,7 @@ class Admin extends User{
 		parent::getNom(); //on appelle la méthode du parent (User)
 		echo ' (depuis la classe étendue)<br>'; 
 	} //on peut rajouter des instruction grâce à la suppression du return
-	...
-}
+...
 ______________________________*/
 
 //
@@ -1302,9 +1297,7 @@ class UserAbo
   public function getPrixAbo()
   {
     echo $this->prix_abo;
-  }
-	...
-}
+...
 ______________________________*/
 
 // parent:: on utilise la constante de la classe parent
@@ -1325,36 +1318,33 @@ class AdminAbo extends UserAbo
       return $this->prix_abo = self::ABONNEMENT; //valeur dans AdminAbo
     } else {
       return $this->prix_abo = parent::ABONNEMENT / 2; //valeur dans UserAbo
-    }
-  }
-	...
-}
+...
 ______________________________*/
 
-$marcadminabo = new AdminAbo('Marc', 'loremipsum', 'majeur');
-$julieadminabo = new AdminAbo('Julie', 'jujufitcats', 'mineur');
-$lucabo = new UserAbo('Luc', 'culcul', 'majeur');
+$marcAdminAbo = new AdminAbo('Marc', 'loremipsum', 'majeur');
+$julieAdminAbo = new AdminAbo('Julie', 'jujufitcats', 'mineur');
+$lucAbo = new UserAbo('Luc', 'culcul', 'majeur');
 
-$marcadminabo->setPrixAbo(); //dans AdminAbo pour majeur (7.5)
-$julieadminabo->setPrixAbo(); //dans AdminAbo pour mineur (5)
-$lucabo->setPrixAbo(); //dans UserAbo pour majeur (15)
+$marcAdminAbo->setPrixAbo(); //dans AdminAbo pour majeur (7.5)
+$julieAdminAbo->setPrixAbo(); //dans AdminAbo pour mineur (5)
+$lucAbo->setPrixAbo(); //dans UserAbo pour majeur (15)
 
 echo 'ABONNEMENT dans UserAbo : ' . UserAbo::ABONNEMENT . '<br>';
 echo 'ABONNEMENT dans AdminAbo : ' . AdminAbo::ABONNEMENT . '<br>';
 echo 'Prix pour ';
-$marcadminabo->getNom();
+$marcAdminAbo->getNom();
 echo ' : ';
-$marcadminabo->getPrixAbo();
+$marcAdminAbo->getPrixAbo();
 
 echo '<br>Prix pour ';
-$julieadminabo->getNom();
+$julieAdminAbo->getNom();
 echo ' : ';
-$julieadminabo->getPrixAbo();
+$julieAdminAbo->getPrixAbo();
 
 echo '<br>Prix pour ';
-$lucabo->getNom();
+$lucAbo->getNom();
 echo ' : ';
-$lucabo->getPrixAbo();
+$lucAbo->getPrixAbo();
 echo '<br>';
 
 //
@@ -1378,26 +1368,101 @@ class AdminAbo extends UserAbo
     echo 'Utilisateurs bannis: ';
     foreach (self::$ban as $valeur) { //on utilise ici aussi l'opérateur de résolution de portée ::
       echo $valeur . ', ';
-    }
-  }
-	...
-}
+...
 ______________________________*/
 
 //Marc et Julie sont Admin, Luc est simple utilisateur
-$marcadminabo->setBan('Titouan', 'Engène');
-$julieadminabo->setBan('Estelle');
-$marcadminabo->getBan(); //Utilisateurs bannis: Titouan, Engène, Estelle,
+$marcAdminAbo->setBan('Titouan', 'Engène');
+$julieAdminAbo->setBan('Estelle');
+$marcAdminAbo->getBan(); //Utilisateurs bannis: Titouan, Engène, Estelle,
 echo '<br>';
-$julieadminabo->getBan(); //pareil car $ban est partagé
+$julieAdminAbo->getBan(); //pareil car $ban est partagé
 echo '<br>';
 
 //
 ////////// LES MÉTHODES ET CLASSES ABSTRAITES
 
+//Une méthode abstraite est vide et ne contient de code, elle sert à faire un plan directeur pour les classes étendues dans lesquelles on pourra ensuite ajouter du code en fonction des besoins.
+//Une classe abstarite est une classe qui possède une méthode abstraite.
+
+/*__ utilisateur.class.php _____
+abstract class UserAbs //on définit la classe abstraite
+{
+  public const ABONNEMENT = 15;
+
+  abstract public function setPrixAbo(); //méthode abstraite vide de code
+	//cette méthode abstraite sera utilisée différemment (prix diff.) dans les différentes classes étendues
+	...
+______________________________*/
+
+/*__ admin.class.php ___________
+class AdminAbs extends UserAbs
+{
+  public function __construct($n, $p, $a)
+  {
+    $this->user_name = strtoupper($n);
+    $this->user_pass = $p;
+    $this->user_age = $a;
+  }
+
+  public function setPrixAbo() //on implémente ici la méthode abstraite pour cette classe étendue
+  {
+    if ($this->user_age === 'mineur') {
+      return $this->prix_abo = parent::ABONNEMENT / 6;
+    } else {
+      return $this->prix_abo = parent::ABONNEMENT / 3;
+...
+______________________________*/
+
+require 'classes/abonne.class.php';
+
+/*__ abonne.class.php __________
+class SubAbs extends UserAbs
+{
+  public function __construct($n, $p, $a)
+  {
+    $this->user_name = $n;
+    $this->user_pass = $p;
+    $this->user_age = $a;
+  }
+
+  public function setPrixAbo() //nouvelle implémentation de la méthode pour les abonnés
+  {
+    if ($this->user_region === 'Sud') {
+      return $this->prix_abo = parent::ABONNEMENT / 2;
+    } else {
+      return $this->prix_abo = parent::ABONNEMENT;
+...
+______________________________*/
+
+$marcAdminAbs = new AdminAbs('Marc', 'mdp123', 'majeur');
+$sophieAdminAbs = new AdminAbs('Sophie', 'sosomanes', 'mineur');
+$michelSubAbs = new SubAbs('Michel', 'foufou', 'mineur');
+
+$marcAdminAbs->setPrixAbo(); //enregistre une valeur $prix_abo pour Marc
+$sophieAdminAbs->setPrixAbo();
+$michelSubAbs->setPrixAbo();
+
+echo '<br>Abo pour ';
+$marcAdminAbs->getNom();
+echo ' : ';
+$marcAdminAbs->getPrixAbo();
+echo '<br>Abo pour ';
+$sophieAdminAbs->getNom();
+echo ' : ';
+$sophieAdminAbs->getPrixAbo();
+echo '<br>Abo pour ';
+$michelSubAbs->getNom();
+echo ' : ';
+$michelSubAbs->getPrixAbo();
+echo '<br>';
+
+//
+////////// LES INTERFACES
+
 //
 //
 ?>
-		<p id="signet">Signet</p>
+		<p id="signet">_____</p>
 	</body>
 </html>

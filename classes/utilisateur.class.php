@@ -1,4 +1,26 @@
 <?php
+abstract class UserAbs
+{
+  protected $user_name;
+  protected $user_age;
+  protected $prix_abo;
+  protected $user_pass;
+  public const ABONNEMENT = 15;
+
+  abstract public function setPrixAbo();
+
+  public function getNom()
+  {
+    echo $this->user_name;
+  }
+  public function getPrixAbo()
+  {
+    echo $this->prix_abo;
+  }
+}
+
+//
+
 class UserAbo
 {
   protected $user_name;
@@ -21,7 +43,7 @@ class UserAbo
 
   public function setPrixAbo()
   {
-    if ($this->user_cat === "mineur") {
+    if ($this->user_cat === 'mineur') {
       return $this->prix_abo = self::ABONNEMENT / 2;
     } else {
       return $this->prix_abo = self::ABONNEMENT;
@@ -33,6 +55,8 @@ class UserAbo
     echo $this->prix_abo;
   }
 }
+
+//
 
 class User
 {
@@ -50,6 +74,8 @@ class User
     echo $this->user_name;
   }
 }
+
+//
 
 class Utilisateur
 {
@@ -71,6 +97,8 @@ class Utilisateur
     $this->user_pass = $new_user_pass;
   }
 }
+
+//
 
 class Utilisateur_test
 {
