@@ -1,4 +1,54 @@
 <?php
+class AdminInt implements UserInt
+{
+  protected $user_name;
+  protected $user_age;
+  protected $prix_abo;
+  protected $user_pass;
+  protected static $ban;
+
+  public function __construct($n, $p, $a)
+  {
+    $this->user_name = strtoupper($n);
+    $this->user_pass = $p;
+    $this->user_age = $a;
+  }
+
+  public function getNom()
+  {
+    echo $this->user_name;
+  }
+  public function getPrixAbo()
+  {
+    echo $this->prix_abo;
+  }
+
+  public function setBan(...$b)
+  {
+    foreach ($b as $banned) {
+      self::$ban[] .= $banned;
+    }
+  }
+  public function getBan()
+  {
+    echo 'Utilisateurs bannis : ';
+    foreach (self::$ban as $valeur) {
+      echo $valeur . ', ';
+    }
+  }
+
+  public function setPrixAbo()
+  {
+    if ($this->user_age === 'mineur') {
+      return $this->prix_abo = UserInt::ABONNEMENT / 6;
+    } else {
+      return $this->prix_abo = UserInt::ABONNEMENT / 3;
+    }
+  }
+}
+
+//
+
 class AdminAbs extends UserAbs
 {
   protected static $ban;
@@ -79,6 +129,8 @@ class AdminAbo extends UserAbo
     }
   }
 }
+
+//
 
 class Admin extends User
 {

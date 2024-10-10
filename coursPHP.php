@@ -1097,6 +1097,7 @@ if (isset($_POST['pass'])) {
 // Une classe est un bloc de code qui va contenir différentes variables, fonctions et éventuellement constantes et qui va servir de plan de création pour différents objets.
 
 require 'classes/utilisateur.class.php';
+require 'classes/utilisateur.interface.php'; //déclaré ici pour plus tard
 $pierre_test = new Utilisateur_test();
 //on crée une nouvelle instance (copie) de la classe Utilisateur_test qui va crée automatiquement un nouvel objet $pierre
 
@@ -1181,6 +1182,8 @@ ______________________________*/
 /*__ admin.class.php ___________
 class Admin extends User{}
 ______________________________*/
+
+//Une classe ne peut étendre qu'une seule classe parent, impossible d'étendre plusieurs autres classes
 
 require 'classes/admin.class.php'; //Admin est une classe "enfant" de User
 $philadmin = new Admin('Phil', 'coucou'); //on utilise le construct du parent User car il est public
@@ -1459,6 +1462,51 @@ echo '<br>';
 
 //
 ////////// LES INTERFACES
+
+//Comme les abstraites, c'est un plan général pour créer des classes dérivées
+//Mais: pas de propriétés mais uniquement des signatures de méthodes et des constantes
+//Une classe peut implémenter plusieurs interfaces
+//Toutes les méthodes de l'interface appelée doivent être obligatoirement implémentées
+
+/*__ utilisateur.interface.php __
+interface UserInt
+{
+  public const ABONNEMENT = 15;
+  public function getNom();
+  public function setPrixAbo();
+  public function getPrixAbo();
+}
+//On peut également étendre des interfaces
+//exemple: interface UserEx extends UserInt
+______________________________*/
+
+/*__ abonne.class.php __________
+class SubInt implements UserInt //on implémente UserInt
+{... //il faut implément toutes les méthodes de l'interface
+______________________________*/
+
+/*__ admin.class.php ___________
+class AdminInt implements UserInt
+{...
+______________________________*/
+
+//require 'classes/utilisateur.interface.php'; ne pas oublier de le déclarer plus haut (1100)
+
+$sophieInt = new AdminInt('Sophie', 'sosoma', 'mineur');
+$sophieInt->setPrixAbo();
+echo 'Abo pour ';
+$sophieInt->getNom();
+echo ' : ';
+$sophieInt->getPrixAbo();
+echo '<br>';
+
+//si plusieurs classes possèdent des similarités -> classe parent abstraite
+//si les méthodes doivent être implémentées de manières différentes -> interface
+
+//
+////////// LES MÉTHODES MAGIQUES
+
+//// __construct() et __destruct()
 
 //
 //
