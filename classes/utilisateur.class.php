@@ -5,6 +5,7 @@ abstract class UserAbs
   protected $user_age;
   protected $prix_abo;
   protected $user_pass;
+  protected $x = 0;
   public const ABONNEMENT = 15;
 
   abstract public function setPrixAbo();
@@ -68,6 +69,21 @@ abstract class UserAbs
 		<br>Argument passé : ' .
       $arg .
       '<br><br>';
+  }
+
+  //Chainage de méthodes
+
+  public function plusUn()
+  {
+    $this->x++;
+    echo '$x vaut ' . $this->x . '<br>';
+    return $this;
+  }
+  public function moinsUn()
+  {
+    $this->x--;
+    echo '$x vaut ' . $this->x . '<br>';
+    return $this;
   }
 }
 

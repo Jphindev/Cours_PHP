@@ -100,7 +100,7 @@ if ($x > 1) {
 var_dump(2 > 4 == false); //d'abord comparaison de 2>4 (false) puis false==false (true)
 
 //
-////////// Opérateurs logiques
+////////// OPÉRATEURS LOGIQUES
 
 /*______________________________
 AND, &&	Renvoie true si toutes les comparaisons valent true
@@ -135,6 +135,16 @@ switch ($x) {
   default:
     echo '$x ne stocke pas de valeur entre 0 et 4';
 }
+
+//
+////////// MATCH
+
+$result_match = match ($x) {
+  1, 3, 5, 7, 9 => '$x est impair',
+  2, 4, 6, 8 => '$x est pair',
+  default => '$x n\'est pas un chiffre',
+};
+echo '<br>' . $result_match . '<br>';
 
 /////////////////////////////////////////////////////////////
 ?>
@@ -1594,15 +1604,150 @@ $marcAdminAbs(1234);
 //s’exécute dès que l’on crée un clone d’un objet pour le nouvel objet créé.
 
 /////////////////////////////////////////////////////////////
+//
 ?>
 <!-- --------------------- -->
 <h2>PHP: NOTIONS AVANCÉES</h2>
 <!-- --------------------- -->
-<?php
+<?php //
+
+
 //
 ////////// CHAINAGE DE MÉTHODES
+
+//$objet->methode1()->methode2()
+
+/*__ utilisateur.class.php _____
+abstract class UserAbs 
+{
+  protected $x = 0;
+	public function plusUn()
+  {
+    $this->x++;
+    echo '$x vaut ' . $this->x . '<br>';
+    return $this;
+  }
+  public function moinsUn()
+  {
+    $this->x--;
+    echo '$x vaut ' . $this->x . '<br>';
+    return $this;
+  }
+...
+______________________________*/
+
+$marcAdminAbs->plusUn()->plusUn()->plusUn()->moinsUn();
+//$x vaut 1, 2, 3, 2
+
 //
-//
+////////// LES CLASSES ANONYMES
+
+//// Les fonctions anonymes (closures) auto-invoquées
+(function () {
+  echo 'Fonction anonyme auto-invoquée';
+})(); //pour effectuer une tâche une seule fois
+
+//// Comme fonction de rappel
+$squ = function (float $x) {
+  return $x ** 2;
+};
+$tab15 = [1, 2, 3, 4, 5];
+$tb_squ = array_map($squ, $tab15); //exécute la closure sur chaque élément du tableau
+echo '<br>';
+print_r($tb_squ);
+echo '<br>';
+
+//// La classe Closure
+
+//$variable = function(anonyme){} la variable devient un objet de la classe prédéfinie Closure. On peut ainsi utiliser la méthode magique __invoke() en se servant de l'objet comme d'une fonction: $variable(argument)
+$squared = function (float $x) {
+  return 'Le carré de ' . $x . ' est ' . $x ** 2 . '<br>';
+};
+echo $squared(3); //On invoque la fonction avec la variable objet
+
+//// Les classes anonymes
+
+//On crée une classe anonyme qu'on stocke dans une variable objet
+$anonyme = new class {
+  public $user_name;
+  public const BONJOUR = 'Bonjour ';
+
+  public function setNom($n)
+  {
+    $this->user_name = $n;
+  }
+  public function getNom()
+  {
+    return $this->user_name;
+  }
+};
+$anonyme->setNom('Pierre');
+echo $anonyme::BONJOUR;
+echo $anonyme->getNom();
+echo '<br><br>';
+//Affiche les infos de $anonyme
+var_dump($anonyme); //object(class@anonymous)#16 (1) { ["user_name"]=> string(6) "Pierre" }
+
+//// En passant par une fonction
+
+function creation_classe_anonyme()
+{
+  return new class {
+    //description classe anonyme
+  };
+}
+$anonymefct = creation_classe_anonyme();
+echo '<br>';
+
+//// En utilisant le constructeur
+
+function anonyme_construct($n)
+{
+  return new class ($n) {
+    public $user_name;
+    public const BONJOUR = 'Bonjour ';
+    public function __construct($n)
+    {
+      $this->user_name = $n;
+    }
+    public function getNom()
+    {
+      return $this->user_name;
+    }
+  };
+}
+//On stocke le résultat de la fonction dans une variable objet
+$anonyme_cst = anonyme_construct('Pierre');
+echo $anonyme_cst::BONJOUR;
+echo $anonyme_cst->getNom();
+echo '<br><br>';
+
+//// Classe anonyme imbriquée -> extends
+
+class Externe
+{
+  private $age = 29;
+  protected $nom = 'Pierre';
+  public function anonyme_inside()
+  {
+    return new class ($this->age) extends Externe {
+      private $a;
+      private $n;
+
+      public function __construct($age)
+      {
+        $this->a = $age;
+      }
+      public function getNomAge()
+      {
+        return 'Nom : ' . $this->nom . ', âge : ' . $this->a;
+      }
+    };
+  }
+}
+$obj = new Externe();
+echo $obj->anonyme_inside()->getNomAge();
+echo '<br><br>';
 ?>
 		<p id="signet">_____</p>
 	</body>
