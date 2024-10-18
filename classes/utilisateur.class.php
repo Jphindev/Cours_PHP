@@ -1,6 +1,7 @@
 <?php
 abstract class UserAbs
 {
+  use Malus;
   protected $user_name;
   protected $user_age;
   protected $prix_abo;
@@ -84,6 +85,17 @@ abstract class UserAbs
     $this->x--;
     echo '$x vaut ' . $this->x . '<br>';
     return $this;
+  }
+
+  //Late static binding
+
+  public static function getStatut()
+  {
+    static::statut();
+  }
+  public static function statut()
+  {
+    echo 'Utilisateur';
   }
 }
 

@@ -1,4 +1,47 @@
 <?php
+
+class AdminAbs extends UserAbs
+{
+  protected static $ban;
+
+  public function __construct($n, $p, $a)
+  {
+    $this->user_name = strtoupper($n);
+    $this->user_pass = $p;
+    $this->user_age = $a;
+  }
+
+  public function setBan(...$b)
+  {
+    foreach ($b as $banned) {
+      self::$ban[] .= $banned;
+    }
+  }
+  public function getBan()
+  {
+    echo 'Utilisateurs bannis : ';
+    foreach (self::$ban as $valeur) {
+      echo $valeur . ', ';
+    }
+  }
+
+  public function setPrixAbo()
+  {
+    if ($this->user_age === 'mineur') {
+      return $this->prix_abo = parent::ABONNEMENT / 6;
+    } else {
+      return $this->prix_abo = parent::ABONNEMENT / 3;
+    }
+  }
+
+  public static function statut()
+  {
+    echo 'Admin';
+  }
+}
+
+//
+
 class AdminInt implements UserInt
 {
   protected $user_name;
@@ -43,43 +86,6 @@ class AdminInt implements UserInt
       return $this->prix_abo = UserInt::ABONNEMENT / 6;
     } else {
       return $this->prix_abo = UserInt::ABONNEMENT / 3;
-    }
-  }
-}
-
-//
-
-class AdminAbs extends UserAbs
-{
-  protected static $ban;
-
-  public function __construct($n, $p, $a)
-  {
-    $this->user_name = strtoupper($n);
-    $this->user_pass = $p;
-    $this->user_age = $a;
-  }
-
-  public function setBan(...$b)
-  {
-    foreach ($b as $banned) {
-      self::$ban[] .= $banned;
-    }
-  }
-  public function getBan()
-  {
-    echo 'Utilisateurs bannis : ';
-    foreach (self::$ban as $valeur) {
-      echo $valeur . ', ';
-    }
-  }
-
-  public function setPrixAbo()
-  {
-    if ($this->user_age === 'mineur') {
-      return $this->prix_abo = parent::ABONNEMENT / 6;
-    } else {
-      return $this->prix_abo = parent::ABONNEMENT / 3;
     }
   }
 }

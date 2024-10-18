@@ -1105,8 +1105,9 @@ if (isset($_POST['pass'])) {
 ////////// CLASSES, INSTANCES ET OBJETS
 
 // Une classe est un bloc de code qui va contenir différentes variables, fonctions et éventuellement constantes et qui va servir de plan de création pour différents objets.
-
+require 'classes/malus.trait.php'; //déclaré ici pour plus tard
 require 'classes/utilisateur.class.php';
+
 require 'classes/utilisateur.interface.php'; //déclaré ici pour plus tard
 $pierre_test = new Utilisateur_test();
 //on crée une nouvelle instance (copie) de la classe Utilisateur_test qui va crée automatiquement un nouvel objet $pierre
@@ -1284,7 +1285,7 @@ ______________________________*/
 //
 ////////// LES CONSTANTES DE CLASSE
 
-// self:: on utilise la constante à l'intérieur de la classe
+// self:: on utilise la constante de la classe en cours d'utilisation
 
 /*__ utilisateur.class.php _____
 class UserAbo
@@ -1302,7 +1303,7 @@ class UserAbo
   public function setPrixAbo()
   {
     if ($this->user_cat === "mineur") {
-      return $this->prix_abo = self::ABONNEMENT / 2;
+      return $this->prix_abo = self::ABONNEMENT / 2; //correspond à utilisateur::ABONNEMENT
     } else {
       return $this->prix_abo = self::ABONNEMENT;
     }
@@ -1748,6 +1749,99 @@ class Externe
 $obj = new Externe();
 echo $obj->anonyme_inside()->getNomAge();
 echo '<br><br>';
+
+//
+////////// L'AUTO CHARGEMENT DES CLASSES
+
+//permet d'importer automatiquement toutes les classes voulues
+spl_autoload_register(function ($classe) {
+  require 'classes/' . $classe . '.class.php';
+});
+
+//On importe ici les classes du dossier classes se terminant par .class.php
+
+//
+////////// FINAL
+
+//mot clef final devant une fonction pour empêcher sa surcharge ou devant une classe pour empêcher de l'étendre
+
+//
+////////// LATE STATIC BINDINGS
+
+//On utilise static à la place de self
+
+/*__ utilisateur.class.php _____
+abstract class UserAbs 
+{
+  public static function getStatut(){
+		self::statut(); //mettre static à la place de self
+	}
+	public static function statut(){
+		echo 'Utilisateur';
+	}
+...
+______________________________*/
+
+/*__ admin.class.php ___________
+class AdminAbs extends UserAbs
+{
+	public static function statut(){
+		echo 'Admin';
+	}
+...
+______________________________*/
+
+AdminAbs::getStatut();
+echo '<br><br>';
+
+//Utilisateur car renvoie à la fonction getStatut du parent UserAbs qui appelle UserAbs::statut()
+//En mettant static::statut(), getStatut appellera le statut de l'objet utilisé.
+
+//
+////////// LES TRAITS
+
+//des bouts de code que l'on peut utiliser dans n'importe quelle classe
+
+/*__ malus.trait.php __________
+trait Malus
+{
+  protected $malus;
+  public function plusCinq()
+  {
+    $this->malus + 5;
+    echo $this->malus . '<br>';
+    return $this;
+...
+______________________________*/
+
+/*__ utilisateur.class.php _____
+abstract class UserAbs 
+{
+  use Malus; //comme si on copiait le trait Malus ici
+...
+______________________________*/
+
+$marcAdminAbs->plusCinq()->plusCinq();
+
+//5, 10
+//L'objet peut utiliser les méthodes et propriétés de Malus
+//Priorités en cas de même nom: Méthode Classe > Méthode Trait > Méthode Parent
+// On peut appeler un trait dans un trait
+
+//// insteadof et as si plusieurs traits utilisants un même nom de méthode sont appelés
+
+/*__ utilisateur.class.php _____
+abstract class UserAbs 
+{
+  use Malus, Bonus{
+	Malus::plusCinq insteadof Bonus; //La méthode de Malus sera utilisée en cas de conflit
+	Bonus::plusCinq as plus5; //On peut donner un alias temporaire à une méthode
+	} 
+...
+______________________________*/
+
+//
+////////// INTERFACE ITERATOR
 ?>
 		<p id="signet">_____</p>
 	</body>
