@@ -3,6 +3,8 @@
 class AdminAbs extends UserAbs
 {
   protected static $ban;
+  public $pubvar1 = 'public variable 1';
+  public $pubvar2 = 'public variable 2';
 
   public function __construct($n, $p, $a)
   {

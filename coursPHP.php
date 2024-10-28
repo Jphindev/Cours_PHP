@@ -386,10 +386,15 @@ ______________________________*/
 
 $prenoms = ['Mathilde', 'Pierre', 'Amandine', 'Florian']; //avec array
 $ages = [27, 29, 21, 29]; //avec []
+$prenoms[] = 'John'; //ajout d'une nouvelle valeur dans le tableau
+array_push($prenoms, 'John'); //ajout d'une nouvelle valeur dans le tableau
 $prenoms[4] = 'John'; //ajout d'une valeur en précisant la clef
 echo $prenoms[2] . '<br>'; //Amandine
 $taille = count($prenoms);
 echo $taille . '<br>'; //5 donne la taille du tableau
+array_splice($prenoms, 4, 1, 'Marc'); //supprime 1 valeur à partir de l'index 4 par une nouvelle valeur "Marc", renvoie le ou les élements supprimés
+array_splice($prenoms, 4, 0, 'Delphine'); //insert une valeur avant l'index 4
+unset($prenoms[5]); //supprime une valeur
 
 //// Affichage d'un tableau complet
 $p = '';
@@ -494,6 +499,7 @@ $stt2 = strtotime('2019/01/25'); //à minuit quand ce n'est pas précisé
 $stt3 = strtotime('next friday');
 $stt4 = strtotime('2 days ago'); //il y a 48h
 $stt5 = strtotime('+1 day'); //dans 24h
+echo date('Y/m/d H:i:s', $stt3) . '<br>';
 
 //// getdate() -> Obtenir une date à partir d'un Timestamp
 echo '<pre>';
@@ -523,6 +529,7 @@ echo gmdate('d-m-Y h:i:s') . '<br>'; //26-01-2019 09:19:41
 //// Transformer une date en français: setlocale() et strftime() /!\ deprecated
 echo strftime('%A %d %B %Y %I:%M:%S') . '<br>'; //Saturday 26 January 2019 10:22:04
 setlocale(LC_TIME, ['fr', 'fra', 'fr_FR']); //on active la localisation française
+date_default_timezone_set('Europe/Paris'); //on défini le fuseau horaire
 echo strftime('%A %d %B %Y %I:%M:%S') . '<br>'; //Samedi 26 Janvier 2019 10:22:04
 echo strftime('%c') . '<br>'; //Sam 26 jan 10:22:04 2019
 
@@ -702,7 +709,7 @@ echo '</pre>';
 readfile('test.txt'); //pas besoin de echo
 
 //
-////////// OUVIRI, LIRE ET FERMER UN FICHIER
+////////// OUVRIR, LIRE ET FERMER UN FICHIER
 
 /*__ modes d'ouvertures ________
 r	read only						r+	read + write				pointeur au début
@@ -1792,10 +1799,9 @@ class AdminAbs extends UserAbs
 ______________________________*/
 
 AdminAbs::getStatut();
-echo '<br><br>';
-
-//Utilisateur car renvoie à la fonction getStatut du parent UserAbs qui appelle UserAbs::statut()
+echo '<br><br>'; //Utilisateur car renvoie à la fonction getStatut du parent UserAbs qui appelle UserAbs::statut()
 //En mettant static::statut(), getStatut appellera le statut de l'objet utilisé.
+echo '<br>';
 
 //
 ////////// LES TRAITS
@@ -1842,6 +1848,74 @@ ______________________________*/
 
 //
 ////////// INTERFACE ITERATOR
+
+//// Parcourir les propriétés publiques d'un objet avec foreach
+
+foreach ($marcAdminAbs as $clef => $valeur) {
+  echo $clef . ' => ' . $valeur . '<br>';
+} //pubvar1 => public variable 1 | pubvar2 => public variable 2
+echo '<br>';
+
+//// Les méthode de l'iterator: current, next, rewind, key et valid
+
+class TestIter implements Iterator
+{
+  private $tableau = [];
+
+  public function __construct(array $tb)
+  {
+    $this->tableau = $tb;
+  }
+
+  public function rewind(): void
+  {
+    //n'est appelée qu'une seule fois
+    echo 'Retour au début du tableau<br>';
+    reset($this->tableau); //revient au 1er élément du tableau
+  }
+  public function valid(): bool
+  {
+    //si false, on sort de la boucle
+    $clef = key($this->tableau);
+    $tableau = $clef !== null && $clef !== false;
+    echo 'Valide : ';
+    var_dump($tableau);
+    echo '<br>';
+    return $tableau;
+  }
+  //On utilise la fonction prédefinie current pour implémenter la méthode current
+  public function current(): mixed
+  {
+    //renvoie la valeur courante
+    $tableau = current($this->tableau);
+    echo 'Elément actuel : ' . $tableau . '<br>';
+    return $tableau;
+  }
+  public function key(): mixed
+  {
+    //renvoie la clef courante
+    $tableau = key($this->tableau);
+    echo 'Clef : ' . $tableau . '<br>';
+    return $tableau;
+  }
+  public function next(): void
+  {
+    //avance le pointeur et renvoie la nouvelle valeur
+    $tableau = next($this->tableau);
+    echo 'Elément suivant : ' . $tableau . '<br>';
+    // return $tableau;
+  }
+}
+$tbtest = ['C1' => 'V1', 'C2' => 'V2', 'C3' => 'V3'];
+$objetIter = new TestIter($tbtest);
+foreach ($objetIter as $c => $v) {
+  echo $c . ' => ' . $v . '<br><br>';
+}
+
+//Quand on utilise foreach avec un objet qui implémente l'interface Iterator, les fonctions vont être appelées dans un ordre défini
+
+//
+////////// LE PASSAGE D'OBJETS: IDENTIFIANTS ET RÉFÉRENCES
 ?>
 		<p id="signet">_____</p>
 	</body>
