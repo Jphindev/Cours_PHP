@@ -1911,11 +1911,125 @@ $objetIter = new TestIter($tbtest);
 foreach ($objetIter as $c => $v) {
   echo $c . ' => ' . $v . '<br><br>';
 }
-
+echo '<br>';
 //Quand on utilise foreach avec un objet qui implémente l'interface Iterator, les fonctions vont être appelées dans un ordre défini
 
 //
 ////////// LE PASSAGE D'OBJETS: IDENTIFIANTS ET RÉFÉRENCES
+
+//// Rappel: passage des variables
+
+$x = 1;
+$y = $x; //passage par valeur, une copie de $x est créée
+$z = &$y; //$z et $y sont liés, si $y change, $z changera aussi
+$y = 2; //$y change et $z change car fait référence à la même valeur
+//$z est un alias de $y
+
+echo 'Valeur de $x : ' . $x . '<br>'; //1
+echo 'Valeur de $y : ' . $y . '<br>'; //2
+echo 'Valeur de $z : ' . $z . '<br>'; //2
+
+//Passage par valeur
+
+$a = 1;
+function parValeur($valeur)
+{
+  $valeur = 5;
+  echo 'Valeur dans la fonction : ' . $valeur . '<br>'; //5
+}
+parValeur($a);
+echo 'Valeur de $a : ' . $a . '<br>'; //1 car portée limitée à la fonction
+
+//Passage par référence
+
+$b = 2;
+function parReference(&$reference)
+{
+  $reference = 10;
+  echo 'Valeur dans la fonction : ' . $reference . '<br>'; //10
+}
+parReference($b);
+echo 'Valeur de $b : ' . $b . '<br>'; //10 car $b est lié à $reference
+echo '<br>';
+
+//// Passage d'objets
+
+$denis = new Utilisateur();
+$denis->setNom('Denis');
+$carole = $denis; // carole et denis pointent vers le même objet
+$carole->setNom('Carole'); //change aussi le nom de $denis
+echo $denis->getNom() . '<br>'; //Carole
+echo '<br>';
+// Les variables d'objet agissent comme s'ils étaient passées par référence
+
+var_dump($carole); //... "Carole" ...
+echo '<br>';
+function cestZero(&$obj)
+{
+  $obj = 0;
+}
+cestZero($carole); //$carole va prendre la valeur 0 car passage par référence
+var_dump($carole); //int(0)
+echo '<br>';
+var_dump($denis); //... "Carole" ...
+echo '<br>';
+
+//
+////////// CLONAGE D'OBJETS ET MÉTHODE MAGIQUE __CLONE()
+
+// Au lieu d'assigner une variable d'objet qui va pointer vers le même objet, on peut cloner cette variable d'objet pour avoir une copie indépendante.
+
+$denis->setNom('Denis');
+$alex = clone $denis;
+echo $alex->getNom(); //Denis
+echo '<br>';
+$alex->setNom('Alex');
+echo $alex->getNom(); //Alex
+echo '<br>';
+echo $denis->getNom(); //Denis
+echo '<br>';
+
+//On peut paramétrer la méthode clone dans la class
+
+/*__ utilisateur.class.php _____
+class Utilisateur 
+{
+  public function __clone(){
+		$this->nom = $this->nom. ' (clone)'; //affichera Denis (clone)
+...
+______________________________*/
+
+//
+////////// LA COMPARAISON D'OBJETS
+
+// == true si mêmes attributs et valeurs et différentes instances de la même classe
+// === true si mêmes attributs et valeurs et même instance de la même classe
+
+$denis2 = new Utilisateur();
+$denis2->setNom('Denis');
+var_dump($denis == $alex); //false car user_name différents
+var_dump($denis == $denis2); //true car user_name identiques
+var_dump($denis === $denis2); //false car instances différentes
+
+$denis3 = $denis2;
+var_dump($denis2 === $denis3); //true car instance identique
+
+$denisclone = clone $denis;
+var_dump($denis == $denisclone); //true car user_name identiques
+var_dump($denis === $denisclone); //false car instances différentes
+echo '<br>';
+
+/////////////////////////////////////////////////////////////
+//
+?>
+<!-- ----------------------------------------------- -->
+<h2>ESPACES DE NOMS, FILTRES ET GESTION DES ERREURS</h2>
+<!-- ----------------------------------------------- -->
+<?php
+//
+
+//
+////////// ESPACES DE NOMS
 ?>
 		<p id="signet">_____</p>
 	</body>
