@@ -2025,11 +2025,73 @@ echo '<br>';
 <!-- ----------------------------------------------- -->
 <h2>ESPACES DE NOMS, FILTRES ET GESTION DES ERREURS</h2>
 <!-- ----------------------------------------------- -->
-<?php
-//
+<?php //
 
 //
 ////////// ESPACES DE NOMS
+
+//Pour résoudre la confusion entre deux noms de classes, interfaces, traits, fonctions ou constantes entre notre code et une extension PHP
+
+include 'classes/exemple.namespace.php';
+//doit être déclaré au tout début du fichier
+/*__ exemple.namespace.php _____
+namespace Exemple {
+	include 'sousexemple.namespace.php';
+	class UserNS{*code de la classe*};
+	const VILLE = 'Paris';
+	const PAYS = 'France';
+	function bonjour(){echo 'Bonjour<br>';};
+
+	bonsoir(); //Bonsoir global | tente d'appeler bonsoir() depuis l'espace courant, puis depuis l'espace global en cas d'échec
+	bonjour(); //Bonjour
+	\bonjour(); //Bonjour global | accède au bonjour() de l'espace global
+	sous\bonjour(); //Sous Bonjour
+	\exemple\sous\bonjour(); //Sous Bonjour
+
+	//Commande namespace et constante magique __NAMESPACE__
+
+	namespace\bonjour(); //Bonjour | accède au namespace courant
+	echo 'Namespace: ' . __NAMESPACE__ . '<br>'; //Namespace: Exemple | accède au nom du namespace courant grâce à la constante magique
+
+	//Instruction use et alias
+
+	use Exemple\Sous; //Revient à écrire use Exemple\Sous as Sous
+	use Exemple\Sous\UserNS as Sousutil; //Alias d'une classe
+	use function Exemple\Sous\bonjour as ssbjr; //Alias d'une fonction
+	use const Exemple\Sous\PAYS; //Importation d'une constante
+	
+	//Import et alias de plusieurs fonctions avec une instruction use
+	use function Exemple\Sous\{bonsoir as ssbns, bonjour as ssbjr};
+	
+	var_dump($ssobj = new Sousutil()); //object(Exemple\Sous\UserNS)#26
+  echo '<br>';
+  ssbjr(); //Sous Bonjour
+  echo PAYS; //Sous France
+  echo '<br>';
+  ssbsr(); //Sous Bonsoir
+}
+//Pour créer du code global en dehors d'un espace de nom défini
+namespace {
+	function bonsoir(){echo 'Bonsoir global<br>';};
+	function bonjour(){echo 'Bonjour global<br>';};
+	echo 'Namespace: ' . __NAMESPACE__ . '<br>'; //Namespace:  | n'affiche rien
+}
+______________________________*/
+
+//Définir un sous-espace de nom
+
+/*__ sousexemple.namespace.php _
+namespace Exemple\Sous{
+	class UserNS{*code*};
+	const VILLE = 'Sous Paris';
+	const PAYS = 'Sous France';
+	function bonsoir(){echo 'Sous Bonsoir<br>';};
+	function bonjour(){echo 'Sous Bonjour<br>';};
+}
+______________________________*/
+
+//
+////////// FILTRES PHP
 ?>
 		<p id="signet">_____</p>
 	</body>
