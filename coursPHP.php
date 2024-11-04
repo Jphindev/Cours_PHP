@@ -2027,6 +2027,7 @@ echo '<br>';
 <!-- ----------------------------------------------- -->
 <?php //
 
+
 //
 ////////// ESPACES DE NOMS
 
@@ -2092,6 +2093,114 @@ ______________________________*/
 
 //
 ////////// FILTRES PHP
+
+/*______________________________
+filter_list()				Retourne une liste de tous les filtres supportés
+filter_id()					Retourne l’identifiant d’un filtre nommé
+filter_input()			Récupère une variable externe et la filtre
+filter_var()				Filtre une variable avec un filtre spécifique
+filter_var_array()	Récupère plusieurs variables et les filtre
+filter_input_array()Récupère plusieurs variables externes et les filtre
+filter_has_var()		Vérifie si une variable d’un type spécifique existe
+______________________________*/
+echo '<br>Filtres PHP: <br>';
+echo '<pre>';
+print_r(filter_list());
+echo '</pre>';
+
+//// id numéroté de chaque filtre
+
+echo '
+	<table>
+		<tr>
+			<th>Nom du filtre</th>
+			<th>Id numéroté</th>
+		</tr>';
+$filtres_tb = filter_list();
+foreach ($filtres_tb as $clef => $nom) {
+  echo '
+		<tr>
+			<td>' .
+    $nom .
+    '</td>
+			<td>' .
+    filter_id($nom) .
+    '</td>
+		</tr>';
+}
+echo '</table>';
+echo '<br>';
+
+//// Valider
+
+/*______________________________
+FILTRE					ID NOM										ID NUM
+boolean					FILTER_VALIDATE_BOOLEAN		258	
+validate_domain	FILTER_VALIDATE_DOMAIN		277	
+validate_email	FILTER_VALIDATE_EMAIL			274	
+float						FILTER_VALIDATE_FLOAT			259	
+int							FILTER_VALIDATE_INT				257	
+validate_ip			FILTER_VALIDATE_IP				275	 
+validate_mac		FILTER_VALIDATE_MAC				276	
+validate_regexp	FILTER_VALIDATE_REGEXP		272	
+validate_url		FILTER_VALIDATE_URL				273
+
+Si le filtre est validé -> renvoie la variable filtrée
+Sinon -> renvoie false
+______________________________*/
+
+var_dump(filter_var(10, FILTER_VALIDATE_INT)); //int(10)
+echo '<br>';
+var_dump(filter_var('Coucou', FILTER_VALIDATE_FLOAT)); //bool(false)
+echo '<br>';
+var_dump(filter_var('jean@mail.com', FILTER_VALIDATE_EMAIL)); //string(13) "jean@mail.com"
+echo '<br>';
+var_dump(filter_var('https://jphindev.com', FILTER_VALIDATE_URL)); //string(20) "https://jphindev.com"
+echo '<br>';
+var_dump(filter_var('true', 258)); //bool(true) on utilise l'id numéroté
+echo '<br>';
+
+//// Nettoyer
+
+/*______________________________
+FILTRE					ID NOM										ID NUM
+email						FILTER_SANITIZE_EMAIL					517	
+encoded					FILTER_SANITIZE_ENCODED				514	
+magic_quotes		FILTER_SANITIZE_MAGIC_QUOTES	521	
+number_float		FILTER_SANITIZE_NUMBER_FLOAT	520	
+number_int			FILTER_SANITIZE_NUMBER_INT		519	
+special_chars		FILTER_SANITIZE_SPECIAL_CHARS	515	
+full_special_chars	FILTER_SANITIZE_FULL_SPECIAL_CHARS	522	
+string					FILTER_SANITIZE_STRING				513	
+stripped				FILTER_SANITIZE_STRIPPED			513	
+url							FILTER_SANITIZE_URL						518	
+unsafe_raw			FILTER_UNSAFE_RAW							516
+
+Si le filtre est validé -> renvoie la variable nettoyée
+Sinon -> renvoie false
+______________________________*/
+
+$texte = '<strong>Pierre</strong>, 29 ans';
+
+echo $texte . '<br>';
+echo filter_var($texte, FILTER_SANITIZE_NUMBER_INT) . '<br>'; //29
+echo filter_var($texte, FILTER_SANITIZE_SPECIAL_CHARS) . '<br>'; //<strong>Pierre</strong>, 29 ans | affiche les balises html
+echo filter_var($texte, FILTER_SANITIZE_STRING) . '<br>'; //annule la balise <strong>
+echo '<br>';
+
+//// Options et drapeaux
+
+var_dump(filter_var('Pierre', FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)); //NULL | affiche null au lieu de false
+echo '<br>';
+var_dump(filter_var('127.0.0.1', FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)); //string(9) "127.0.0.1"
+echo '<br>';
+$options = ['options' => ['min_range' => 0, 'max_range' => 10]];
+var_dump(filter_var(5, 257, $options)); //int(5) | 5 est bien compris entre 0 et 10
+echo '<br>';
+
+//// Cas pratiques
+
+//
 ?>
 		<p id="signet">_____</p>
 	</body>
