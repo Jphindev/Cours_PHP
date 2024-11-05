@@ -2275,9 +2275,74 @@ echo $nbr3; //erreur avec affichage personnalisé
 echo '<br>';
 
 //
-////////// GESTION DES EXCEPTIONS: TRY THROW CATCH
+////////// GESTION DES EXCEPTIONS: TRY THROW CATCH (depuis PHP 5)
 
-//
+//Cela permet de ne pas bloquer le chargement de la page en cas d'erreur fatale
+?>
+<form action='coursPHP.php' method='post'>
+	<label for='n1'>Numérateur :</label>
+	<input type='number' id='n1' name='n1'><br>
+	<label for='n2'>Dénominateur :</label>
+	<input type='number' id='n2' name='n2'><br>
+	<input type='submit' value='Envoyer'><br>
+</form>
+<?php
+function division($x, $y)
+{
+  if ($y == 0) {
+    //pour signaler division par zéro
+    throw new Exception('Division par zéro impossible', 15);
+    //on crée un nouvel objet de la classe exception avec un message d'erreur et un numéro de code
+  } else {
+    echo '<br>Résultat de' . $x . '/' . $y . ' : ' . $x / $y;
+  }
+}
+
+//En pratique, il faudrait vérifier les données envoyées
+if (isset($_POST['n1']) && isset($_POST['n2'])) {
+  try {
+    division($_POST['n1'], $_POST['n2']);
+  } catch (Exception $e) {
+    //ici les actions à mener si une exception a été constatée
+    echo 'Message d\'erreur : ' . $e->getMessage(); //le message défini
+    echo '<br>';
+    echo 'Code d\'erreur : ' . $e->getCode(); //le code défini (15)
+    echo '<br>';
+    echo 'Ligne : ' . $e->getLine(); //la ligne ddu throw
+    echo '<br>';
+    echo $e->getFile(); //le fichier concerné
+  }
+}
+echo '<br><br>';
+
+//// CLASSE ERROR ET INTERFACE THROWABLE (depuis PHP 7)
+
+try {
+  bonj(); //n'existe pas
+} catch (Error $e) {
+  echo $e->getMessage(); //Call to undefined function bonj()
+}
+
+echo '<br><br>';
+
+try {
+  if (!function_exists('test')) {
+    throw new Error('La fonction n\'est pas définie');
+  }
+} catch (Error $e) {
+  echo $e->getMessage(); //La fonction n'est pas définie
+}
+echo '<br><br>';
+
+//// Finally
+
+//On exécute un code quelle que soit la situation
+try {
+  bonj(); //n'existe pas
+} finally {
+  echo 'Toujours affiché';
+}
+echo 'Non affiché ici car exception lancée et non capturée';
 ?>
 		<p id="signet">_____</p>
 	</body>
