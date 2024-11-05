@@ -2196,9 +2196,86 @@ var_dump(filter_var('127.0.0.1', FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)); //strin
 echo '<br>';
 $options = ['options' => ['min_range' => 0, 'max_range' => 10]];
 var_dump(filter_var(5, 257, $options)); //int(5) | 5 est bien compris entre 0 et 10
+echo '<br><br><br>';
+
+//// Cas pratique: formulaire HTML
+?>
+<form method='post' action='coursPHP.php'>
+	<label for='ip'>IP:</label>
+	<input type='text' id='ip' name='ip'><br>
+	<label for='mail'>Mail:</label>
+  <input type='mail' id='mail' name='mail'><br>
+	<label for='url'>URL:</label>
+  <input type='url' id='url' name='url'><br>
+	<input type='submit' value='Envoyer'>
+<!-- mettre type='text' pour contourner les blocages du navigateur -->
+</form>
+<?php //les inputs sont stockées dans la superglobale $_POST
+
+
+//Vérification de l'IP
+if (isset($_POST['ip'])) {
+  if (filter_input(INPUT_POST, 'ip', FILTER_VALIDATE_IP)) {
+    echo $_POST['ip'] . ' est une IP valide <br>';
+  } else {
+    echo $_POST['ip'] . ' n\'est pas une IP valide <br>';
+  }
+}
+
+//Vérification du mail
+if (isset($_POST['mail'])) {
+  //On nettoie l'input mail
+  $mailnet = filter_input(INPUT_POST, 'mail', FILTER_SANITIZE_EMAIL);
+  echo 'Mail retenu : ' .
+    $mailnet .
+    '<br> Mail original : ' .
+    $_POST['mail'] .
+    '<br>';
+  //On le valide avec filter_var car $mailnet est définie en interne
+  if (filter_var($mailnet, FILTER_VALIDATE_EMAIL)) {
+    echo $mailnet . ' est une adresse mail valide <br>';
+  } else {
+    echo $mailnet . ' n\'est pas une adresse mail valide <br>';
+  }
+}
+
+//Vérification de l'URL
+if (isset($_POST['url'])) {
+  //filtre de nettoyage
+  $url = filter_input(INPUT_POST, 'url', FILTER_SANITIZE_URL);
+  echo 'URL retenue : ' .
+    $url .
+    '<br> URL originale : ' .
+    $_POST['url'] .
+    '<br>';
+  //filtre de validation
+  if (filter_var($url, FILTER_VALIDATE_URL)) {
+    echo $url . ' est une URL valide <br>';
+  } else {
+    echo $url . ' n\'est pas une URL valide <br>';
+  }
+}
+echo '<br><br>';
+
+//
+////////// GESTION DES ERREURS
+
+echo $nbr2; //erreur car variable non définie
+
+//On peut configurer l'affichage d'une erreur
+set_error_handler(function ($niveau, $message, $fichier, $ligne) {
+  echo 'Erreur : ' . $message . '<br>';
+  echo 'Niveau de l\'erreur : ' . $niveau . '<br>';
+  echo 'Erreur dans le fichier : ' . $fichier . '<br>';
+  echo 'Emplacement de l\'erreur : ' . $ligne . '<br>';
+});
+
+echo '<br>';
+echo $nbr3; //erreur avec affichage personnalisé
 echo '<br>';
 
-//// Cas pratiques
+//
+////////// GESTION DES EXCEPTIONS: TRY THROW CATCH
 
 //
 ?>
