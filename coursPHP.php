@@ -31,6 +31,47 @@ echo "La variable \$prenom contient: ";
 echo $prenom . '<br>';
 
 //
+////////// STRING AND NUMBERS
+
+// gettype() pour connaitre le type d'une variable
+
+//// String (chaines de caractères)
+
+$exString1 = 'Hello There !';
+echo gettype($exString1);
+$exString2 = '36';
+echo gettype($exString2);
+
+echo strlen('Hello world!'); //12 - Nombre de caractères
+echo str_word_count('Hello world!'); //2 - Nombre de mots
+echo strpos('Hello world!', 'world'); //6 - Position du mot recherché
+echo strtoupper($exString1); //HELLO THERE ! - en majuscule
+echo strtolower($exString1); //en minuscule
+echo str_replace('There', 'Dolly', $exString1); //Hello Dolly ! - remplace des caractères
+echo strrev($exString1); //en sens inverse
+echo trim($exString1); //HelloThere! - enlève les espaces
+$exStrToArr1 = explode(' ', $exString1); //créé un tableau en séparant par les espaces
+print_r($exStrToArr1); //['Hello', 'There', '!']
+echo substr($exString1, 6, 5); //There - renvoie les 5 caractères depuis la position 6
+
+//// Integer and float (entiers et décimaux)
+
+$exInt1 = 36;
+var_dump(is_int($exInt1)); //true - vérifie si c'est un entier
+$exFloat = 3.6;
+var_dump(is_float($exFloat)); //true - vérifie si c'est un nombre décimal
+
+echo pi(); //renvoie la valeur de pi
+echo min(0, 150, 30, 20, -8, -200); //-200 - renvoie la valeur minimum
+echo max(0, 150, 30, 20, -8, -200); //150 - renvoie la valeur maximum
+echo abs(-6.7); //6.7 - renvoie la valeur absolue
+echo sqrt(64); //8 - renvoie la racine carrée
+echo round(0.6); //1 - renvoie l'entier le plus proche
+echo round(0.49); //0
+echo rand(); //renvoie un entier aléatoire
+echo rand(1, 100); //entier aléatoire entre 1 et 100
+
+//
 ////////// CONCATÉNATION
 
 // avec guillemets pour interpréter
@@ -394,7 +435,7 @@ $taille = count($prenoms);
 echo $taille . '<br>'; //5 donne la taille du tableau
 array_splice($prenoms, 4, 1, 'Marc'); //supprime 1 valeur à partir de l'index 4 par une nouvelle valeur "Marc", renvoie le ou les élements supprimés
 array_splice($prenoms, 4, 0, 'Delphine'); //insert une valeur avant l'index 4
-unset($prenoms[5]); //supprime une valeur
+unset($prenoms[5]); //supprime une valeur sans supprimer l'index
 
 //// Affichage d'un tableau complet
 $p = '';
@@ -413,8 +454,13 @@ echo $res . '<br>';
 ////////// TABLEAUX ASSOCIATIFS = CLEFS TEXTUELLES
 
 $ages = ['Mathilde' => 27, 'Pierre' => 29];
-$ages['Amandine'] = 21;
+$ages['Amandine'] = 21; //ajoute une entrée au tableau
 echo 'Pierre a ' . $ages['Pierre'] . ' ans.<br>'; //Pierre a 29 ans.
+
+$cars = ['brand' => 'Ford', 'model' => 'Mustang', 'year' => 1964];
+$newarray = array_diff($cars, ['Mustang', 1964]); //suppr des valeurs dans un tableau
+array_pop($ages); //suppr la dernière valeur d'un tableau
+array_shift($ages); //suppr la première valeur d'un tableau
 
 foreach ($ages as $clef_prenom => $valeur_age) {
   echo $clef_prenom . ' a ' . $valeur_age . ' ans.<br>';
@@ -470,6 +516,18 @@ echo '<pre>'; //pour conserver la mise en forme du code
 print_r($produits); //pour un affichage simple
 var_dump($produits); //donne plus d'informations
 echo '</pre>';
+
+//
+////////// SORT
+
+/*______________________________
+sort() - ascending order
+rsort() - descending order
+asort() - associative in ascending order, according to the value
+ksort() - associative in ascending order, according to the key
+arsort() - associative in descending order, according to the value
+krsort() - associative in descending order, according to the key
+______________________________*/
 
 /////////////////////////////////////////////////////////////
 ?>
