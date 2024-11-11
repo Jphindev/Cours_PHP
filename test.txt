@@ -1,5 +1,4 @@
-Dans cette nouvelle section, nous allons apprendre à manipuler des fichiers en PHP.
+Ceci est un exemple de texte dont voici la première ligne. Voici un saut de ligne:
 
-Nous allons ainsi apprendre à ouvrir et lire un fichier déjà
-existant ou à créer des fichiers de différents formats (fichiers textes, etc.)
-grâce aux fonctions PHP et à écrire des informations dedans.
+Ici la troisième ligne puis retour à la ligne.
+La quatrième et dernière ligne.

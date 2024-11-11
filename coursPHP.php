@@ -1,4 +1,12 @@
 <!DOCTYPE html>
+<?php
+session_start();
+$cookie_name = 'user';
+$cookie_value = 'Jphindev';
+setcookie($cookie_name, $cookie_value, time() + 86400 * 30, '/');
+
+// 86400 = 1 day
+?>
 <html>
 	<head>
 		<title>Cours PHP & MySQL</title>
@@ -38,21 +46,21 @@ echo $prenom . '<br>';
 //// String (chaines de caractères)
 
 $exString1 = 'Hello There !';
-echo gettype($exString1);
+echo gettype($exString1) . '<br>';
 $exString2 = '36';
 echo gettype($exString2);
 
-echo strlen('Hello world!'); //12 - Nombre de caractères
-echo str_word_count('Hello world!'); //2 - Nombre de mots
-echo strpos('Hello world!', 'world'); //6 - Position du mot recherché
-echo strtoupper($exString1); //HELLO THERE ! - en majuscule
-echo strtolower($exString1); //en minuscule
-echo str_replace('There', 'Dolly', $exString1); //Hello Dolly ! - remplace des caractères
-echo strrev($exString1); //en sens inverse
-echo trim($exString1); //HelloThere! - enlève les espaces
+echo strlen('Hello world!') . '<br>'; //12 - Nombre de caractères
+echo str_word_count('Hello world!') . '<br>'; //2 - Nombre de mots
+echo strpos('Hello world!', 'world') . '<br>'; //6 - Position du mot recherché
+echo strtoupper($exString1) . '<br>'; //HELLO THERE ! - en majuscule
+echo strtolower($exString1) . '<br>'; //en minuscule
+echo str_replace('There', 'Dolly', $exString1) . '<br>'; //Hello Dolly ! - remplace des caractères
+echo strrev($exString1) . '<br>'; //en sens inverse
+echo trim($exString1) . '<br>'; //HelloThere! - enlève les espaces
 $exStrToArr1 = explode(' ', $exString1); //créé un tableau en séparant par les espaces
 print_r($exStrToArr1); //['Hello', 'There', '!']
-echo substr($exString1, 6, 5); //There - renvoie les 5 caractères depuis la position 6
+echo substr($exString1, 6, 5) . '<br>'; //There - renvoie les 5 caractères depuis la position 6
 
 //// Integer and float (entiers et décimaux)
 
@@ -551,12 +559,12 @@ echo 'Timestamp 25 janvier 2019 08h30 (GMT) : ' .
   gmmktime(8, 30, 0, 1, 25, 2019) .
   '<br>'; //donne le timestamp de 8h30
 
-//// strtotime() -> Timestamp du GMT à partir d'une chaîne de caractère
+//// strtotime(time, start date) -> Timestamp du GMT à partir d'une chaîne de caractère
 $stt1 = strtotime('2019/01/25 08:30:00'); //plusieurs formats possible
 $stt2 = strtotime('2019/01/25'); //à minuit quand ce n'est pas précisé
 $stt3 = strtotime('next friday');
 $stt4 = strtotime('2 days ago'); //il y a 48h
-$stt5 = strtotime('+1 day'); //dans 24h
+$stt5 = strtotime('+1 day', $stt3); // 24h après vendredi prochain
 echo date('Y/m/d H:i:s', $stt3) . '<br>';
 
 //// getdate() -> Obtenir une date à partir d'un Timestamp
@@ -571,7 +579,19 @@ echo '</pre>';
 //
 ////////// OBTENIR ET FORMATER UNE DATE
 
-//// date() locale
+/*______________________________
+l - day of the week
+d - day of the month (01 to 31)
+m - month (01 to 12)
+Y - year (in four digits)
+H - 24-hour format of an hour (00 to 23)
+h - 12-hour format of an hour (01 to 12)
+i - Minutes (00 to 59)
+s - Seconds (00 to 59)
+a - Lowercase Ante meridiem and Post meridiem (am or pm)
+______________________________*/
+
+//// date(format, timestamp) locale
 echo date('d/m/Y') . '<br>'; //26/01/2019
 echo date('l d m Y h:i:s') . '<br>'; //Saturday 26 01 2019 10:14:43
 echo date('c') . '<br>'; //2019-01-26T10:14:43+01:00
@@ -609,8 +629,12 @@ if ($tmstp1 < $tmstp2) {
   echo 'Les deux dates sont les mêmes';
 } else {
   echo 'Le ' . $dfr2 . ' est avant le ' . $dfr1;
-}
-//Le Samedi 30 juin 2018 est avant le Vendredi 25 janvier 2019
+} //Le Samedi 30 juin 2018 est avant le Vendredi 25 janvier 2019
+
+// Opérations sur les dates
+$d3 = strtotime('July 04');
+$d4 = ceil(($d3 - time()) / 60 / 60 / 24); //différence entre 2 date arrondie au supérieur, en jours
+echo 'There are ' . $d4 . ' days until 4th of July.';
 
 //// checkdate() pour tester la validité d'une date
 checkdate(1, 25, 2019); //true – le 25 jan 2019 est une date valide
@@ -622,9 +646,9 @@ setlocale(LC_TIME, ['fr', 'fra', 'fr_FR']);
 $format1 = '%A %d %B %Y %H:%M:%S';
 $format2 = '%H:%M:%S';
 
-$date1 = strftime($format1);
-$date2 = strftime($format1);
-$date3 = strftime($format2);
+$date1 = strftime($format1); //Vendredi 08 novembre 2024 15:58:03
+$date2 = strftime($format1); //Vendredi 08 novembre 2024 15:58:03
+$date3 = strftime($format2); //15:58:03
 
 echo $date1 . '<br>' . $date2 . '<br>' . $date3 . '<br>';
 
@@ -702,11 +726,19 @@ echo $_SERVER['REQUEST_TIME'] . '<br>';
 
 //Tableau contenant les variables d'environnement
 echo $_ENV['USER']; //nom de l'utilisateur qui exécute le script
+echo '<br>';
 
 //
 ////////// $_FILES
 
-//contient les informations d'un fichier, son type, sa taile, son nom, etc.
+//contient les informations d'un fichier lors de son upload, son type, sa taile, son nom, etc.
+/*______________________________
+$_FILES['input_name']['name']; // nom du fichier
+$_FILES['input_name']['type']; // type du fichier
+$_FILES['input_name']['size']; // taille en octets
+$_FILES['input_name']['tmp_name']; // emplacement du fichier temporaire sur le serveur
+$_FILES['input_name']['error']; // code erreur du téléchargement
+______________________________*/
 
 //
 ////////// $_GET et $_POST
@@ -717,29 +749,39 @@ echo $_ENV['USER']; //nom de l'utilisateur qui exécute le script
 ////////// $_COOKIE
 
 /*______________________________
-//Un cookie est un fichier texte qui peut contenir une quantité limitée de données.
-//setcookie(name, value, expire, path, domain, secure, httponly) pour créer un cookie
+//Un cookie est un fichier texte qui peut contenir une quantité limitée de données. Il est enregistré du coté utilisateur.
+//setcookie(NAME, value, expire, path, domain, secure, httponly) pour créer un cookie
 // /!\ à écrire en début de fichier avant la balise html
+$cookie_name = "user";
+$cookie_value = "John Doe";
+setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day - expire dans 30 jours
 setcookie('user_id', '1234');
 setcookie('user_pref', 'dark_theme', time()+3600*24, '/', '', true, true);
 setcookie('user_id', '5678'); //modification d'un cookie
 setcookie('user_pref', '', time()-3600, '/', '', false, false); //suppression d'un cookie
 ______________________________*/
 
-if (isset($_COOKIE['user_id'])) {
-  //on vérifie si le cookie existe
-  echo 'Votre ID de session est le ' . $_COOKIE['user_id'];
+//on vérifie si le cookie existe
+if (!isset($_COOKIE[$cookie_name])) {
+  echo "Cookie named '" . $cookie_name . "' is not set!";
+} else {
+  echo "Cookie '" . $cookie_name . "' is set!<br>";
+  echo 'Value is: ' . $_COOKIE[$cookie_name] . '<br>';
 }
+print_r($_COOKIE);
+echo '<br>';
 
 //
 ////////// $_SESSION
 
-//Une session démarre dès que la fonction session_start() est appelée et se termine en général dès que la fenêtre courante du navigateur est fermée
-session_start(); // /!\ à écrire en début de fichier avant setcookie
+//Une session démarre dès que la fonction session_start() est appelée et se termine en général dès que la fenêtre courante du navigateur est fermée. Elle permet d'utiliser des variables sur plusieurs pages.
+//session_start(); /!\ à écrire en début de fichier avant setcookie
 $_SESSION['prenom'] = 'Pierre'; //on définit des variables de session
+echo 'Prénom de la session: ' . $_SESSION['prenom'] . '.<br>'; //peut être appelé sur d'autres pages qui ont session_start()
 $_SESSION['age'] = 29;
 $id_session = session_id(); //on récupère d'id de session s'il existe
 $id_sess_cookie = $_COOKIE['PHPSESSID']; //on peut aussi récupérer l'id de session avec $_COOKIE
+print_r($_SESSION);
 
 //Il est possible d'accéder aux variables de session dans une autre page php si celle-ci débute par session_start();
 
@@ -757,41 +799,53 @@ echo '<br>';
 //
 ////////// LECTURE DE FICHIER TXT
 
-echo file_get_contents('test.txt') . '<br>'; //affiche le contenu du fichier
-echo nl2br(file_get_contents('test.txt')) . '<br>'; //pour conserver les retours à la ligne
+echo 'Avec file_get_contents: <br>' .
+  file_get_contents('test.txt') .
+  '<br><br>'; //affiche le contenu du fichier
+echo 'Avec nl2br: <br>' . nl2br(file_get_contents('test.txt')) . '<br><br>'; //pour conserver les retours à la ligne
 
-echo '<pre>';
+echo 'Avec print_r: <pre>';
 print_r(file('test.txt')); //sous forme de tableau
 echo '</pre>';
 
+echo 'Avec readfile: <br>';
 readfile('test.txt'); //pas besoin de echo
+echo '<br><br>';
 
 //
 ////////// OUVRIR, LIRE ET FERMER UN FICHIER
 
 /*__ modes d'ouvertures ________
 r	read only						r+	read + write				pointeur au début
-a	write & keep				a+ write + read & keep			pointeur à la fin
-w	write & replace		w+ write + read & replace			pointeur au début
-x	create new & write		x+ create new & write + read		pointeur au début
+a	write after					a+ write after + read			pointeur à la fin
+w	write & replace			w+ write + read & replace			pointeur au début
+x	create new & write	x+ create new & write + read		pointeur au début
 c	write or create & keep	c+ write + read or create & keep	pointeur au début
 b binary pour une meilleure compatibilité
 ______________________________*/
 
 //// fopen() pour ouvrir un fichier
-$ressource = fopen('test.txt', 'rb'); //r=read only – b=meilleure compatibilité
+($ressource = fopen('test.txt', 'rb')) or die('Impossible à ouvrir'); //r=read only – b=meilleure compatibilité
 
 //// fread() pour lire un fichier ouvert depuis la position courante du curseur
-echo fread($ressource, filesize('test.txt')); //on lit le fichier en entier et place le curseur à la fin
+echo 'Avec fopen puis fread: ' .
+  fread($ressource, filesize('test.txt')) .
+  '<br><br>'; //on lit le fichier en entier et place le curseur à la fin
+
+//// fseek() pour déplacer le curseur
+fseek($ressource, 20); //pour placer le pointeur derrière le 20e caractère
+fseek($ressource, 40, SEEK_CUR); //avancer de 40 à partir de la position courante
+fseek($ressource, 0);
 
 //// fgets() pour lire ligne par ligne
 echo 'Ligne 1 : ' . fgets($ressource) . '<br>'; //pour lire un fichier ligne par ligne
-echo 'Ligne 2(30) : ' . fgets($ressource, 30) . '<br>'; //pour lire 30 octets de la 2e ligne
-echo 'Ligne 2 suite: ' . fgets($ressource, 30) . '<br>'; //pour lire la suite la 2e ligne
+echo 'Ligne 2 : ' . fgets($ressource) . '<br>'; //ligne vide
+echo 'Ligne 3(30) : ' . fgets($ressource, 30) . '<br>'; //pour lire 30 octets de la 3e ligne
+echo 'Ligne 3 suite: ' . fgets($ressource, 15) . '<br>'; //pour lire la suite la 3e ligne
 
 //// fgetc() pour lire caractère par caractère
 echo 'Caractère 1 : ' . fgetc($ressource) . '<br>'; //affiche le 1er caractère du fichier
-echo 'Caractère 2 : ' . fgetc($ressource) . '<br>'; //affiche le 2e caractère du fichier
+echo 'Caractère 2 : ' . fgetc($ressource) . '<br><br>'; //affiche le 2e caractère du fichier
 
 //// feof() pour savoir si on est à la fin d'un fichier end of file)
 //// ftell() pour connaitre la place du pointeur
@@ -803,18 +857,16 @@ while (!feof($ressource)) {
     $ligne .
     '" contient ' .
     strlen($ligne) .
-    ' caractères <br>';
+    ' caractères <br><br>';
 } //et on affiche le nombre de caractères de cette ligne grâce à strlen (string length)
-
-//// fseek() pour déplacer le curseur
-fseek($ressource, 20); //pour placer le pointeur derrière le 20e caractère
-fseek($ressource, 40, SEEK_CUR); //avancer de 40 à partir de la position courante
 
 //// fclose() pour fermer un fichier
 fclose($ressource); //bonne pratique pour ne pas utiliser inutilement des ressources
 
 //
 ////////// CRÉER ET ÉCRIRE DANS UN FICHIER
+
+//// fopen('chemin/file.txt', 'w')
 
 //// file_put_contents('chemin', 'contenu') pour créer ou écraser un fichier
 file_put_contents('exemple.txt', 'Ecriture dans un fichier');
@@ -823,8 +875,8 @@ $texte .= "\n**NOUVEAU TEXTE**"; //on ajoute du contenu
 file_put_contents('exemple.txt', $texte); //on écrase avec le contenu complet
 file_put_contents('exemple.txt', "\n**AJOUT DE TEXTE**", FILE_APPEND); //meilleure méthode pour ajouter du texte
 
-//// fwrite()
-$fichier = fopen('exemple2.txt', 'c+b'); //on crée ou ouvre un fichier /!\ c+ pointeur au début
+//// fwrite() pour écrire au niveau du pointeur
+$fichier = fopen('exemple2.txt', 'c+b'); //on crée ou ouvre un fichier /!\ c+ pointeur au début - a+ pour mettre le pointeur à la fin
 fseek($fichier, filesize('exemple2.txt')); //on place le curseur en fin de fichier sinon le début sera effacé
 fwrite($fichier, 'Un premier texte dans mon fichier. '); //on insère du contenu
 fwrite($fichier, 'Un autre texte. '); //un autre contenu à la suite
@@ -880,6 +932,72 @@ if (chmod('fichier.txt', 0755)) {
   //chmod s'exécute et la condition est ensuite vérifiée
   echo 'Permissions du fichier bien modifiées.<br><br>';
 }
+
+//
+////////// UPLOAD D'UN FICHIER
+echo '<br><br>';
+?>
+<form action="upload.php" method="post" enctype="multipart/form-data">
+  Select image to upload:
+  <input type="file" name="fileToUpload" id="fileToUpload">
+  <input type="submit" value="Upload Image" name="submit">
+</form>
+<?php
+/*__upload.php__________________
+$target_dir = 'uploads/';
+$target_file = $target_dir . basename($_FILES['fileToUpload']['name']);
+$uploadOk = 1;
+$imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+// Check if image file is a actual image or fake image
+if (isset($_POST['submit'])) {
+  $check = getimagesize($_FILES['fileToUpload']['tmp_name']);
+  if ($check !== false) {
+    echo 'File is an image - ' . $check['mime'] . '. <br>';
+    $uploadOk = 1;
+  } else {
+    echo 'File is not an image. <br>';
+    $uploadOk = 0;
+  }
+}
+
+// Check if file already exists
+if (file_exists($target_file)) {
+  echo 'Sorry, file already exists. <br>';
+  $uploadOk = 0;
+}
+
+// Check file size
+if ($_FILES['fileToUpload']['size'] > 500000) {
+  echo 'Sorry, your file is too large. <br>';
+  $uploadOk = 0;
+}
+
+// Allow certain file formats
+if (
+  $imageFileType != 'jpg' &&
+  $imageFileType != 'png' &&
+  $imageFileType != 'jpeg' &&
+  $imageFileType != 'gif'
+) {
+  echo 'Sorry, only JPG, JPEG, PNG & GIF files are allowed. <br>';
+  $uploadOk = 0;
+}
+
+// Check if $uploadOk is set to 0 by an error
+if ($uploadOk == 0) {
+  echo 'Sorry, your file was not uploaded. <br>';
+  // if everything is ok, try to upload file
+} else {
+  if (move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target_file)) {
+    echo 'The file ' .
+      htmlspecialchars(basename($_FILES['fileToUpload']['name'])) .
+      ' has been uploaded. <br>';
+  } else {
+    echo 'Sorry, there was an error uploading your file. <br>';
+  }
+}
+______________________________*/
 
 /////////////////////////////////////////////////////////////
 ?>
@@ -2401,6 +2519,136 @@ try {
   echo 'Toujours affiché';
 }
 echo 'Non affiché ici car exception lancée et non capturée';
+
+/////////////////////////////////////////////////////////////
+//
+?>
+<!-- ----------------------------- -->
+<h2>EXEMPLE DE FORMULAIRE COMPLET</h2>
+<!-- ----------------------------- -->
+<?php //
+
+
+// define variables and set to empty values
+$nameErr = $emailErr = $genderErr = $websiteErr = '';
+$name = $email = $gender = $comment = $website = '';
+
+// Nettoyage des données
+function test_input($data)
+{
+  $data = trim($data);
+  $data = stripslashes($data);
+  $data = htmlspecialchars($data);
+  return $data;
+}
+
+// Validation des données
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+  if (empty($_POST['name'])) {
+    $nameErr = 'Name is required';
+  } else {
+    $name = test_input($_POST['name']);
+    // check if name only contains letters and whitespace with regex
+    if (!preg_match("/^[a-zA-Z-' ]*$/", $name)) {
+      $nameErr = 'Only letters and white space allowed';
+    }
+  }
+
+  if (empty($_POST['email'])) {
+    $emailErr = 'Email is required';
+  } else {
+    $email = test_input($_POST['email']);
+    // check if e-mail address is well-formed with filter
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      $emailErr = 'Invalid email format';
+    }
+  }
+
+  if (empty($_POST['website'])) {
+    $website = '';
+  } else {
+    $website = test_input($_POST['website']);
+    // check if URL address syntax is valid (this regular expression also allows dashes in the URL)
+    if (
+      !preg_match(
+        '/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i',
+        $website
+      )
+    ) {
+      $websiteErr = 'Invalid URL';
+    }
+  }
+
+  if (empty($_POST['comment'])) {
+    $comment = '';
+  } else {
+    $comment = test_input($_POST['comment']);
+  }
+
+  if (empty($_POST['gender'])) {
+    $genderErr = 'Gender is required';
+  } else {
+    $gender = test_input($_POST['gender']);
+  }
+}
+?>
+
+<h3>PHP Form Validation Example</h3>
+<p><span class="error">* required field</span></p>
+<form method="post" action="<?php echo htmlspecialchars(
+  $_SERVER['PHP_SELF']
+); ?>">
+
+	<!-- On sauvegarde la value de chaque input pour ne pas tout effacer en cas d'erreur -->
+  Name: <input type="text" name="name" value="<?php echo $name; ?>">
+  <span class="error">* <?php echo $nameErr; ?></span>
+  <br><br>
+  E-mail: <input type="text" name="email" value="<?php echo $email; ?>">
+  <span class="error">* <?php echo $emailErr; ?></span>
+  <br><br>
+  Website: <input type="text" name="website" value="<?php echo $website; ?>">
+  <span class="error"><?php echo $websiteErr; ?></span>
+  <br><br>
+  Comment: <textarea name="comment" rows="5" cols="40"><?php echo $comment; ?></textarea>
+  <br><br>
+  Gender:
+	<!-- On sauvegarde le statut du bouton sélectionné avec checked -->
+  <input type="radio" name="gender" <?php if (
+    isset($gender) &&
+    $gender == 'female'
+  ) {
+    echo 'checked';
+  } ?> value="female">Female
+  <input type="radio" name="gender" <?php if (
+    isset($gender) &&
+    $gender == 'male'
+  ) {
+    echo 'checked';
+  } ?> value="male">Male
+  <input type="radio" name="gender" <?php if (
+    isset($gender) &&
+    $gender == 'other'
+  ) {
+    echo 'checked';
+  } ?> value="other">Other  
+  <span class="error">* <?php echo $genderErr; ?></span>
+  <br><br>
+  <input type="submit" name="submit" value="Submit">  
+</form>
+
+<?php
+echo '<h3>Your Input:</h3>';
+echo $name;
+echo '<br>';
+echo $email;
+echo '<br>';
+echo $website;
+echo '<br>';
+echo $comment;
+echo '<br>';
+echo $gender;
+?>
+
 ?>
 		<p id="signet">_____</p>
 	</body>
