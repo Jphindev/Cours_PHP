@@ -269,6 +269,12 @@ ______________________________*/
    echo 'Paramètre 2 = ' . $parametre2 . '<br>';
  }
 
+ /*______________________________
+Deux façons de créer une fonction
+Normal: function varfct($param) {} puis varfct($arg);
+En nommant une fonction anonyme: $varfct = function($param){} puis $varfct($arg);
+______________________________*/
+
  //// Appel d'une fonction
  $argument1 = 'oui';
  $argument2 = 'non';
@@ -418,9 +424,36 @@ ______________________________*/
  echo 'FILE: ' . __FILE__ . '<br>'; //Contient le chemin complet et le nom du fichier
  echo 'DIR: ' . __DIR__ . '<br>'; //Contient le nom du dossier dans lequel est le fichier
  echo 'LINE: ' . __LINE__ . '<br>'; //Contient le numéro de la ligne courante dans le fichier
- echo 'FUNCTION: ' . __FUNCTION__ . '<br>';
+ echo 'FUNCTION: ' . __FUNCTION__ . '<br>'; //Contient le nom de la fonction actuellement définie ou {closure} pour les fonctions anonymes
 
-//Contient le nom de la fonction actuellement définie ou {closure} pour les fonctions anonymes
+ //
+ ////////// LES FONCTIONS ANONYMES (closures) ET AUTO-INVOQUÉES
+
+ (function () {
+   echo 'Fonction anonyme auto-invoquée';
+ })(); //pour effectuer une tâche une seule fois
+
+ //
+ ////////// FONCTION DE RAPPEL (callback)
+ $squ = function (float $x) {
+   return $x ** 2;
+ };
+ $tab15 = [1, 2, 3, 4, 5];
+ $tb_squ = array_map($squ, $tab15); //exécute la closure sur chaque élément du tableau
+ echo '<br>';
+ print_r($tb_squ);
+ echo '<br>';
+
+ function my_callback($item)
+ {
+   return strlen($item);
+ }
+ $stringsFruits = ['apple', 'orange', 'banana', 'coconut'];
+ $lengths = array_map('my_callback', $stringsFruits);
+ print_r($lengths);
+ //On peut aussi mettre une fonction anonyme en callback
+ //$lengths = array_map( function($item) { return strlen($item); } , $stringsFruits);
+ echo '<br>';
 
 /////////////////////////////////////////////////////////////
 ?>
@@ -1526,28 +1559,28 @@ $marcAdminAbo->setPrixAbo(); //dans AdminAbo pour majeur (7.5)
 $julieAdminAbo->setPrixAbo(); //dans AdminAbo pour mineur (5)
 $lucAbo->setPrixAbo(); //dans UserAbo pour majeur (15)
 
-echo 'ABONNEMENT dans UserAbo : ' . UserAbo::ABONNEMENT . '<br>';
-echo 'ABONNEMENT dans AdminAbo : ' . AdminAbo::ABONNEMENT . '<br>';
+echo 'ABONNEMENT dans UserAbo : ' . UserAbo::ABONNEMENT . '<br>'; //15
+echo 'ABONNEMENT dans AdminAbo : ' . AdminAbo::ABONNEMENT . '<br>'; //5
 echo 'Prix pour ';
 $marcAdminAbo->getNom();
 echo ' : ';
-$marcAdminAbo->getPrixAbo();
+$marcAdminAbo->getPrixAbo(); //Prix pour MARC (admin) : 7.5
 
 echo '<br>Prix pour ';
 $julieAdminAbo->getNom();
 echo ' : ';
-$julieAdminAbo->getPrixAbo();
+$julieAdminAbo->getPrixAbo(); //Prix pour JULIE (admin) : 5
 
 echo '<br>Prix pour ';
 $lucAbo->getNom();
 echo ' : ';
-$lucAbo->getPrixAbo();
+$lucAbo->getPrixAbo(); //Prix pour Luc : 15
 echo '<br>';
 
 //
 ////////// LES PROPRIÉTÉS ET MÉTHODES STATIQUES
 
-// Une propriété statique est une propriété dont la valeur va pouvoir être modifiée et qui va être partagée par tous les objets de la classe.
+// Une propriété statique est une propriété dont la valeur va pouvoir être modifiée et qui va être partagée par tous les objets de la classe, enfants et parents.
 // On ne peut pas accéder à une propriété statique depuis un objet avec -> mais avec ::
 
 /*__ admin.class.php ___________
@@ -1579,7 +1612,7 @@ echo '<br>';
 //
 ////////// LES MÉTHODES ET CLASSES ABSTRAITES
 
-//Une méthode abstraite est vide et ne contient de code, elle sert à faire un plan directeur pour les classes étendues dans lesquelles on pourra ensuite ajouter du code en fonction des besoins.
+//Une méthode abstraite est vide et ne contient pas de code, elle sert à faire un plan directeur pour les classes étendues dans lesquelles on pourra ensuite ajouter du code en fonction des besoins.
 //Une classe abstarite est une classe qui possède une méthode abstraite.
 
 /*__ utilisateur.class.php _____
@@ -1643,24 +1676,24 @@ $michelSubAbs->setPrixAbo();
 echo '<br>Abo pour ';
 $marcAdminAbs->getNom();
 echo ' : ';
-$marcAdminAbs->getPrixAbo();
+$marcAdminAbs->getPrixAbo(); //Abo pour MARC : 5
 echo '<br>Abo pour ';
 $sophieAdminAbs->getNom();
 echo ' : ';
-$sophieAdminAbs->getPrixAbo();
+$sophieAdminAbs->getPrixAbo(); //Abo pour SOPHIE : 2.5
 echo '<br>Abo pour ';
 $michelSubAbs->getNom();
 echo ' : ';
-$michelSubAbs->getPrixAbo();
+$michelSubAbs->getPrixAbo(); //Abo pour Michel : 7.5
 echo '<br>';
 
 //
 ////////// LES INTERFACES
 
-//Comme les abstraites, c'est un plan général pour créer des classes dérivées
-//Mais: pas de propriétés mais uniquement des signatures de méthodes et des constantes
+//Comme les classes abstraites, c'est un plan général pour créer des classes dérivées
+//Pas de propriétés (variables) mais uniquement des signatures de méthodes et des constantes
 //Une classe peut implémenter plusieurs interfaces
-//Toutes les méthodes de l'interface appelée doivent être obligatoirement implémentées
+//Toutes les méthodes de l'interface appelée sont abstraites et publiques et doivent être obligatoirement implémentées
 
 /*__ utilisateur.interface.php __
 interface UserInt
@@ -1691,7 +1724,7 @@ $sophieInt->setPrixAbo();
 echo 'Abo pour ';
 $sophieInt->getNom();
 echo ' : ';
-$sophieInt->getPrixAbo();
+$sophieInt->getPrixAbo(); //Abo pour SOPHIE : 2.5
 echo '<br>';
 
 //si plusieurs classes possèdent des similarités -> classe parent abstraite
@@ -1826,21 +1859,6 @@ $marcAdminAbs->plusUn()->plusUn()->plusUn()->moinsUn();
 //
 ////////// LES CLASSES ANONYMES
 
-//// Les fonctions anonymes (closures) auto-invoquées
-(function () {
-  echo 'Fonction anonyme auto-invoquée';
-})(); //pour effectuer une tâche une seule fois
-
-//// Comme fonction de rappel
-$squ = function (float $x) {
-  return $x ** 2;
-};
-$tab15 = [1, 2, 3, 4, 5];
-$tb_squ = array_map($squ, $tab15); //exécute la closure sur chaque élément du tableau
-echo '<br>';
-print_r($tb_squ);
-echo '<br>';
-
 //// La classe Closure
 
 //$variable = function(anonyme){} la variable devient un objet de la classe prédéfinie Closure. On peut ainsi utiliser la méthode magique __invoke() en se servant de l'objet comme d'une fonction: $variable(argument)
@@ -1869,6 +1887,7 @@ $anonyme->setNom('Pierre');
 echo $anonyme::BONJOUR;
 echo $anonyme->getNom();
 echo '<br><br>';
+
 //Affiche les infos de $anonyme
 var_dump($anonyme); //object(class@anonymous)#16 (1) { ["user_name"]=> string(6) "Pierre" }
 
@@ -2195,6 +2214,20 @@ var_dump($denis == $denisclone); //true car user_name identiques
 var_dump($denis === $denisclone); //false car instances différentes
 echo '<br>';
 
+//
+////////// FORMAT JSON
+
+//// Encoder un tableau en JSON
+$arrayAge = ['Peter' => 35, 'Ben' => 37, 'Joe' => 43];
+echo json_encode($arrayAge); // {"Peter":35,"Ben":37,"Joe":43}
+echo '<br>';
+
+//// Décoder en objet ou tableau
+$jsonobj = '{"Peter":35,"Ben":37,"Joe":43}';
+var_dump(json_decode($jsonobj)); //object(stdClass)#1 (3) { ["Peter"]=> int(35) ["Ben"]=> int(37) ["Joe"]=> int(43) }
+var_dump(json_decode($jsonobj, true)); //array(3) { ["Peter"]=> int(35) ["Ben"]=> int(37) ["Joe"]=> int(43) }
+echo '<br>';
+
 /////////////////////////////////////////////////////////////
 //
 ?>
@@ -2307,6 +2340,34 @@ foreach ($filtres_tb as $clef => $nom) {
 echo '</table>';
 echo '<br>';
 
+//// Nettoyer
+
+/*______________________________
+FILTRE					ID NOM										ID NUM
+email						FILTER_SANITIZE_EMAIL					517	
+encoded					FILTER_SANITIZE_ENCODED				514	
+magic_quotes		FILTER_SANITIZE_MAGIC_QUOTES	521	
+number_float		FILTER_SANITIZE_NUMBER_FLOAT	520	
+number_int			FILTER_SANITIZE_NUMBER_INT		519	
+special_chars		FILTER_SANITIZE_SPECIAL_CHARS	515	
+full_special_chars	FILTER_SANITIZE_FULL_SPECIAL_CHARS	522	
+string					FILTER_SANITIZE_STRING				513	
+stripped				FILTER_SANITIZE_STRIPPED			513	
+url							FILTER_SANITIZE_URL						518	
+unsafe_raw			FILTER_UNSAFE_RAW							516
+
+Si le filtre est validé -> renvoie la variable nettoyée
+Sinon -> renvoie false
+______________________________*/
+
+$texte = '<strong>Pierre</strong>, 29 ans';
+
+echo $texte . '<br>';
+echo filter_var($texte, FILTER_SANITIZE_NUMBER_INT) . '<br>'; //29
+echo filter_var($texte, FILTER_SANITIZE_SPECIAL_CHARS) . '<br>'; //<strong>Pierre</strong>, 29 ans | affiche les balises html
+echo filter_var($texte, FILTER_SANITIZE_STRING) . '<br>'; //annule la balise <strong>
+echo '<br>';
+
 //// Valider
 
 /*______________________________
@@ -2336,42 +2397,19 @@ echo '<br>';
 var_dump(filter_var('true', 258)); //bool(true) on utilise l'id numéroté
 echo '<br>';
 
-//// Nettoyer
-
-/*______________________________
-FILTRE					ID NOM										ID NUM
-email						FILTER_SANITIZE_EMAIL					517	
-encoded					FILTER_SANITIZE_ENCODED				514	
-magic_quotes		FILTER_SANITIZE_MAGIC_QUOTES	521	
-number_float		FILTER_SANITIZE_NUMBER_FLOAT	520	
-number_int			FILTER_SANITIZE_NUMBER_INT		519	
-special_chars		FILTER_SANITIZE_SPECIAL_CHARS	515	
-full_special_chars	FILTER_SANITIZE_FULL_SPECIAL_CHARS	522	
-string					FILTER_SANITIZE_STRING				513	
-stripped				FILTER_SANITIZE_STRIPPED			513	
-url							FILTER_SANITIZE_URL						518	
-unsafe_raw			FILTER_UNSAFE_RAW							516
-
-Si le filtre est validé -> renvoie la variable nettoyée
-Sinon -> renvoie false
-______________________________*/
-
-$texte = '<strong>Pierre</strong>, 29 ans';
-
-echo $texte . '<br>';
-echo filter_var($texte, FILTER_SANITIZE_NUMBER_INT) . '<br>'; //29
-echo filter_var($texte, FILTER_SANITIZE_SPECIAL_CHARS) . '<br>'; //<strong>Pierre</strong>, 29 ans | affiche les balises html
-echo filter_var($texte, FILTER_SANITIZE_STRING) . '<br>'; //annule la balise <strong>
-echo '<br>';
-
 //// Options et drapeaux
 
 var_dump(filter_var('Pierre', FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)); //NULL | affiche null au lieu de false
 echo '<br>';
+
 var_dump(filter_var('127.0.0.1', FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)); //string(9) "127.0.0.1"
 echo '<br>';
+
 $options = ['options' => ['min_range' => 0, 'max_range' => 10]];
 var_dump(filter_var(5, 257, $options)); //int(5) | 5 est bien compris entre 0 et 10
+
+$strASCII = '<h1>Hello WorldÆØÅ!</h1>';
+var_dump(filter_var($strASCII, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH)); //enlèves les valeurs ASCII > 127
 echo '<br><br><br>';
 
 //// Cas pratique: formulaire HTML
@@ -2452,8 +2490,6 @@ echo '<br>';
 
 //
 ////////// GESTION DES EXCEPTIONS: TRY THROW CATCH (depuis PHP 5)
-
-//Cela permet de ne pas bloquer le chargement de la page en cas d'erreur fatale
 ?>
 <form action='coursPHP.php' method='post'>
 	<label for='n1'>Numérateur :</label>
@@ -2466,20 +2502,21 @@ echo '<br>';
 function division($x, $y)
 {
   if ($y == 0) {
-    //pour signaler division par zéro
-    throw new Exception('Division par zéro impossible', 15);
     //on crée un nouvel objet de la classe exception avec un message d'erreur et un numéro de code
+    throw new Exception('Division par zéro impossible', 15);
+    //l'erreur fatale va arrêter l'exécution du code s'il n'y a pas de catch
   } else {
     echo '<br>Résultat de' . $x . '/' . $y . ' : ' . $x / $y;
   }
 }
 
-//En pratique, il faudrait vérifier les données envoyées
+//catch permet de ne pas bloquer le chargement de la page en cas d'erreur fatale
 if (isset($_POST['n1']) && isset($_POST['n2'])) {
   try {
+    //le code à surveiller
     division($_POST['n1'], $_POST['n2']);
   } catch (Exception $e) {
-    //ici les actions à mener si une exception a été constatée
+    //les actions à mener si une exception a été constatée
     echo 'Message d\'erreur : ' . $e->getMessage(); //le message défini
     echo '<br>';
     echo 'Code d\'erreur : ' . $e->getCode(); //le code défini (15)
