@@ -3,9 +3,8 @@
 session_start();
 $cookie_name = 'user';
 $cookie_value = 'Jphindev';
-setcookie($cookie_name, $cookie_value, time() + 86400 * 30, '/');
-
-// 86400 = 1 day
+setcookie($cookie_name, $cookie_value, time() + 86400 * 30, '/'); // 86400 = 1 day
+echo 'php version: ' . phpversion();
 ?>
 <html>
 	<head>
