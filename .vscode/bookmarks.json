@@ -449,6 +449,66 @@
 					"label": ""
 				}
 			]
+		},
+		{
+			"path": "coursMySQL.php",
+			"bookmarks": [
+				{
+					"line": 9,
+					"column": 39,
+					"label": ""
+				},
+				{
+					"line": 13,
+					"column": 32,
+					"label": ""
+				},
+				{
+					"line": 57,
+					"column": 29,
+					"label": ""
+				},
+				{
+					"line": 77,
+					"column": 31,
+					"label": ""
+				},
+				{
+					"line": 101,
+					"column": 32,
+					"label": ""
+				},
+				{
+					"line": 107,
+					"column": 20,
+					"label": ""
+				},
+				{
+					"line": 156,
+					"column": 40,
+					"label": ""
+				},
+				{
+					"line": 325,
+					"column": 24,
+					"label": ""
+				},
+				{
+					"line": 389,
+					"column": 36,
+					"label": ""
+				},
+				{
+					"line": 444,
+					"column": 29,
+					"label": ""
+				},
+				{
+					"line": 450,
+					"column": 27,
+					"label": ""
+				}
+			]
 		}
 	]
 }

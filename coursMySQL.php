@@ -90,7 +90,7 @@ try {
 		Codepostal INT UNSIGNED NOT NULL,
 		Pays VARCHAR(30) NOT NULL,
 		Mail VARCHAR(50) NOT NULL,
-		DateInscription TIMESTAMP,
+		DateInscription TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		UNIQUE(Mail))";
   $dbco->exec($sqltb);
   echo 'Table bien créée !<br>';
@@ -107,7 +107,7 @@ try {
 //
 ////////// INSERTION
 
-//// INSERT TO
+//// INSERT INTO
 
 // INSERT INTO nom_de_table (nom_colonne1, nom_colonne2, nom_colonne3, …)
 // VALUES (valeur1, valeur2, valeur3, …)
@@ -268,7 +268,7 @@ try {
 //// avec bindParam et marqueurs nommés
 
 try {
-  $nom10 = 'Bombeur';
+  $nom10 = 'Bombeur'; //on pourrait écrire ces valeurs après bindParam
   $prenom10 = 'Jean';
   $adresse10 = 'Rue des Bouchers';
   $ville10 = 'Toulouse';
@@ -324,6 +324,131 @@ try {
 
 //
 ////////// MODIFICATIONS
+
+//// Données (UPDATE)
+
+try {
+  //On prépare la requête et on l'exécute
+  $sthUpdt = $dbco->prepare("
+		UPDATE Clients
+		SET mail='victor.durand@edhec.com'
+		WHERE id=2
+	");
+  //UPDTAE nom_table SET colonne='...' WHERE ligne(id)='...'
+  $sthUpdt->execute();
+
+  //On affiche le nombre d'entrées mise à jour
+  $count = $sthUpdt->rowCount();
+  print 'Mise à jour de ' . $count . ' entrée(s)<br>';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage() . '<br>'; //nombre d’entrées affectées par la dernière requête
+}
+
+//// Structure (ALTER TABLE)
+
+// Ajouter une colonne (ADD)
+try {
+  $sqlAddCol = "
+		ALTER TABLE Clients
+		ADD Age INT(3) UNSIGNED
+	";
+
+  $dbco->exec($sqlAddCol);
+  echo 'Colonne ajoutée<br>';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage() . '<br>';
+}
+
+// Supprimer une colonne (DROP COLUMN)
+try {
+  $sqlDelCol = "
+		ALTER TABLE Clients
+		DROP COLUMN Age
+	";
+
+  $dbco->exec($sqlDelCol);
+  echo 'Colonne supprimée<br>';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage() . '<br>';
+}
+
+// Modifier une colonne (MODIFY COLUMN)
+
+try {
+  $sqlModCol = "
+		ALTER TABLE Clients
+		MODIFY COLUMN Prenom VARCHAR(50)
+	";
+
+  $dbco->exec($sqlModCol);
+  echo 'Colonne mise à jour<br>';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage() . '<br>';
+}
+
+//
+////////// SUPPRESSION (DELETE FROM)
+
+//// Suppression d'entrées (WHERE)
+
+try {
+  $sqlDelRow = "DELETE FROM Clients WHERE nom='Dubois'";
+  $sthDelRow = $dbco->prepare($sqlDelRow);
+  $sthDelRow->execute();
+
+  $count = $sthDelRow->rowCount();
+  print 'Effacement de ' . $count . ' entrées.<br>';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage() . '<br>';
+}
+
+//// Suppression de toutes les données
+
+/*______________________________
+try {
+  $sqlDelAll = 'DELETE FROM Clients'; // pas de WHERE
+  $sthDelAll = $dbco->prepare($sqlDelAll);
+  $sthDelAll->execute();
+  $count = $sthDelAll->rowCount();
+  print 'Effacement de ' . $count . ' entrées.';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage();
+}
+______________________________*/
+
+//// Suppression d'une table (DROP TABLE)
+/*______________________________
+try {
+  $sqlDelTable = 'DROP TABLE Clients';
+  $dbco->exec($sqlDelTable);
+
+  echo 'Table bien supprimée';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage();
+}
+______________________________*/
+
+//// Suppression d'une base de données (DROP DATABASE)
+
+/*______________________________
+try {
+  $sqlDelBdd = 'DROP DATABASE pdodb';
+  $dbco->exec($sqlDelBdd);
+
+  echo 'Base de données bien supprimée';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage();
+}
+______________________________*/
+?>
+<!-- -------------------- -->
+<h2>SELECTION DE DONNÉES</h2>
+<!-- -------------------- -->
+<?php
+//
+
+//
+////////// SELECTION SIMPLE (SELECT)
 ?>
     </body>
 </html>
