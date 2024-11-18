@@ -55,7 +55,7 @@ UNSIGNED – limiter aux nombres positifs (0 inclus).
 ______________________________*/
 
 //
-////////// CRÉATION D'UNE BDD
+////////// CRÉATION D'UNE BASE DE DONNÉES AVEC PDO
 
 $servname = 'localhost';
 $dbname = 'pdodb';
@@ -81,6 +81,10 @@ try {
   $dbco = new PDO("mysql:host=$servname;dbname=$dbname", $user, $pass);
   $dbco->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+  //À utiliser seulement si on créé une base de données et une table en même temps
+  //$sqltb = "use pdodb";
+  //$dbco->exec($sqltb);
+
   $sqltb = "CREATE TABLE Clients(
 		Id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 		Nom VARCHAR(30) NOT NULL,
@@ -103,6 +107,9 @@ try {
 <!-- ----------------------- -->
 <?php //
 
+
+//Quand on attend un résultat -> prepare execute de PDOStatement
+//Sinon exec de PDO
 
 //
 ////////// INSERTION
@@ -167,7 +174,7 @@ try {
   $pays6 = 'France';
   $mail6 = 'flodc@gmail.com';
 
-  //template $sth appartient à la classe PDOStatement
+  //template $sth6 appartient à la classe PDOStatement
   $sth6 = $dbco->prepare("
 		INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Pays,Mail)
 			VALUES (:nom6, :prenom6, :adresse6, :ville6, :cp6, :pays6, :mail6)
@@ -444,11 +451,219 @@ ______________________________*/
 <!-- -------------------- -->
 <h2>SELECTION DE DONNÉES</h2>
 <!-- -------------------- -->
+<?php //
+
+
+/*______________________________
+Id	Nom			Prenom		Adresse						Ville			CP			Pays		Mail												DateInscription
+
+1		Giraud	Pierre		Quai d'Europe			Toulon		83000		France	pierre.giraud@edhec.com			2024-11-15 17:49:49
+2		Durand 	Victor 		Rue des Acacias 	Brest 		29200 	France 	victor.durand@edhec.com 		2024-11-15 17:49:49
+3 	Julia 	Joly 			Rue du Hameau 		Lyon 			69001 	France 	july@gmail.com 							2024-11-15 17:49:49
+4 	Doe 		John 			Rue des Lys 			Nantes 		44000 	France 	j.doe@gmail.com 						2024-11-15 17:49:49
+5 	Dupont 	Jean 			Bvd Original 			Bordeaux 	33000 	France 	jd@gmail.com 								2024-11-15 17:49:49
+6 	Dechand Flo 			Rue des Moulins 	Marseille 13001 	France 	flodc@gmail.com 						2024-11-15 17:49:49
+9 	Palaz 	Mathilde 	Rue des Cerisiers Rouen 		76000 	France 	mathplz@gmail.com 					2024-11-15 17:49:49
+10 	Bombeur Jean 			Rue des Bouchers 	Toulouse 	31001 	France 	jbb@gmail.com 							2024-11-15 17:49:49
+11 	Gérard 	Philippe 	Impasse sans Nom 	Nantes 		44000 	France 	philou@gmail.com 						2024-11-15 17:49:49
+______________________________*/
+
+//
+////////// SELECTION SIMPLE (SELECT)
+
+try {
+  $sthSel = $dbco->prepare('SELECT prenom, mail FROM Clients');
+  //SELECT * FROM Clients pour récupérer toutes les données
+  $sthSel->execute(); // classe PDOStatement
+  $resultatSel = $sthSel->fetchAll(PDO::FETCH_ASSOC);
+  //Retourne un tableau associatif avec le nom des colonnes en clefs
+  echo '<pre>';
+  print_r($resultatSel);
+  echo '</pre>';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage() . '<br>';
+}
+echo '<hr>';
+
+//// Que les valeurs uniques, sans les doublons (DISTINCT)
+
+try {
+  $sthUni = $dbco->prepare('SELECT DISTINCT prenom FROM Clients');
+  $sthUni->execute();
+
+  $resultatUni = $sthUni->fetchAll(PDO::FETCH_ASSOC);
+
+  echo '<pre>';
+  print_r($resultatUni); // 2 Jean dans la table, un seul affiché
+  echo '</pre>';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage() . '<br>';
+}
+echo '<hr>';
+
+//// Trier selon un ordre (ORDER BY)
+
+try {
+  //Tri croissant par prénoms puis décroissant par noms
+  $sthTri = $dbco->prepare('
+		SELECT prenom, nom
+		FROM Clients
+		ORDER BY prenom ASC, nom DESC
+	');
+  $sthTri->execute();
+
+  $resultatTri = $sthTri->fetchAll(PDO::FETCH_ASSOC);
+
+  echo '<pre>';
+  print_r($resultatTri);
+  echo '</pre>';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage() . '<br>';
+}
+echo '<hr>';
+
+//
+////////// CRITÈRES DE SÉLECTION
+
+//// WHERE
+
+try {
+  //On sélectionne tous les clients dont le nom = Jean
+  $sthJean = $dbco->prepare("
+		SELECT prenom, nom, mail
+		FROM clients
+		WHERE prenom = 'Jean'
+	");
+  $sthJean->execute();
+
+  $resultatJean = $sthJean->fetchAll(PDO::FETCH_ASSOC);
+
+  echo '<pre>';
+  print_r($resultatJean);
+  echo '</pre>';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage();
+}
+echo '<hr>';
+
+//// Opérateurs AND OR NOT
+
+try {
+  /*Sélectionne tous les users dont l'id est spérieur à 4
+   *ET dont soit le prénom n'est pas Jean OU soit le nom est Bombeur*/
+  $sthOp = $dbco->prepare("
+		SELECT prenom, nom, mail
+		FROM clients
+		WHERE id > 4 AND NOT prenom = 'Jean' OR nom = 'Bombeur'
+	"); //id AND (NOT prenom OR nom)
+  $sthOp->execute();
+
+  $resultatOp = $sthOp->fetchAll(PDO::FETCH_ASSOC);
+
+  echo '<pre>';
+  print_r($resultatOp);
+  echo '</pre>';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage();
+}
+echo '<hr>';
+
+//// LIMIT et OFFSET
+
+try {
+  /*Sélectionne 2 résultats à partir de la 4è entrée de la table*/
+  $sthLim = $dbco->prepare("
+		SELECT prenom, nom, mail
+		FROM clients
+		LIMIT 2 OFFSET 3
+	"); //1ere entrée = OFFSET 0
+  $sthLim->execute();
+
+  $resultatLim = $sthLim->fetchAll(PDO::FETCH_ASSOC);
+
+  echo '<pre>';
+  print_r($resultatLim);
+  echo '</pre>';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage();
+}
+echo '<hr>';
+
+//// LIKE et wildcards
+
+/*______________________________
+% de 0 à plusieurs caractères
+_ 1 caractère exactement
+
+p%		Cherche les valeurs qui commencent par un «p»
+%e		Cherche les valeurs qui se terminent par «e»
+%e%		Cherche les valeurs qui possèdent un «e»
+p%e		Cherche les valeurs qui commencent par «p» et se terminent par «e»
+p__e	4 caractères exactement qui commencent par «p» et se terminent par «e»
+p_%		Cherche des valeurs de 2 caractères ou plus qui commencent par «p»
+______________________________*/
+
+try {
+  //Cherche tous les prénoms de 4 lettres commençant par "Jo"
+  $sthLike = $dbco->prepare("
+		SELECT prenom, nom, mail
+		FROM clients
+		WHERE prenom LIKE 'Jo__'
+	");
+  $sthLike->execute();
+
+  $resultatLike = $sthLike->fetchAll(PDO::FETCH_ASSOC);
+
+  echo '<pre>';
+  print_r($resultatLike);
+  echo '</pre>';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage();
+}
+echo '<hr>';
+
+//// IN et BETWEEN
+
+try {
+  //Cherche tous les utilisateurs dont le prénom est Jean ou John
+  $sthIn = $dbco->prepare("
+		SELECT prenom, nom, mail
+		FROM clients
+		WHERE prenom IN ('Jean', 'John')
+	");
+  $sthIn->execute();
+
+  //Cherche les noms entre G et Julia (inclus)
+  $sthBet = $dbco->prepare("
+		SELECT prenom, nom
+		FROM clients
+		WHERE nom BETWEEN 'G' AND 'Julia'
+		ORDER BY nom ASC
+	");
+  $sthBet->execute();
+
+  $resultatIn = $sthIn->fetchAll(PDO::FETCH_ASSOC);
+  $resultatBet = $sthBet->fetchAll(PDO::FETCH_ASSOC);
+
+  echo '<pre>';
+  print_r($resultatIn);
+  print_r($resultatBet);
+  echo '</pre>';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage();
+}
+echo '<hr>';
+?>
+<!-- ------------------------------------ -->
+<h2>FONCTIONS D'AGRÉGATIONS ET SCALAIRES</h2>
+<!-- ------------------------------------ -->
 <?php
 //
 
 //
-////////// SELECTION SIMPLE (SELECT)
+////////// FONCTIONS D'AGRÉGATIONS min, max, count, avg, sum
+
+//// min et max
 ?>
     </body>
 </html>
