@@ -92,7 +92,7 @@ try {
 		Adresse VARCHAR(70) NOT NULL,
 		Ville VARCHAR(30) NOT NULL,
 		Codepostal INT UNSIGNED NOT NULL,
-		Pays VARCHAR(30) NOT NULL,
+		Age INT(3) UNSIGNED NOT NULL,
 		Mail VARCHAR(50) NOT NULL,
 		DateInscription TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		UNIQUE(Mail))";
@@ -120,17 +120,17 @@ try {
 // VALUES (valeur1, valeur2, valeur3, …)
 
 try {
-  $sql0 = "INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Pays,Mail)
-    VALUES('Giraud','Pierre','Quai d\'Europe','Toulon',83000,'France','pierre.giraud@edhec.com')";
+  $sql0 = "INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Age,Mail)
+    VALUES('Giraud','Pierre','Quai d\'Europe','Toulon',83000,29,'pierre.giraud@edhec.com')";
   //pas de Id (AUTO_INCREMENT) et DateInscription (TIMESTAMP) car ces valeurs sont automatiquements mises à jour.
   $dbco->exec($sql0);
 
-  $sql1 = "INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Pays,Mail)
-    VALUES('Durand','Victor','Rue des Acacias','Brest',29200,'France','v.durand@gmail.com')";
+  $sql1 = "INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Age,Mail)
+    VALUES('Durand','Victor','Rue des Acacias','Brest',29200,34,'v.durand@gmail.com')";
   $dbco->exec($sql1);
 
-  $sql2 = "INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Pays,Mail)
-    VALUES('Julia','Joly','Rue du Hameau','Lyon',69001,'France','july@gmail.com')";
+  $sql2 = "INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Age,Mail)
+    VALUES('Julia','Joly','Rue du Hameau','Lyon',69001,21,'july@gmail.com')";
   $dbco->exec($sql2);
 
   echo 'Entrées ajoutées dans la table<br>';
@@ -145,12 +145,12 @@ try {
 try {
   $dbco->beginTransaction(); //désactive l'autocommit
 
-  $sql3 = "INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Pays,Mail)
-		VALUES('Doe','John','Rue des Lys','Nantes',44000,'France','j.doe@gmail.com')";
+  $sql3 = "INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Age,Mail)
+		VALUES('Doe','John','Rue des Lys','Nantes',44000,29,'j.doe@gmail.com')";
   $dbco->exec($sql3);
 
-  $sql4 = "INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Pays,Mail)
-		VALUES('Dupont','Jean','Bvd Original','Bordeaux',33000,'France','jd@gmail.com')";
+  $sql4 = "INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Age,Mail)
+		VALUES('Dupont','Jean','Bvd Original','Bordeaux',33000,45,'jd@gmail.com')";
   $dbco->exec($sql4);
 
   $dbco->commit(); //applique les modifications et valide la transaction
@@ -171,13 +171,12 @@ try {
   $adresse6 = 'Rue des Moulins';
   $ville6 = 'Marseille';
   $cp6 = 13001;
-  $pays6 = 'France';
+  $age6 = 29;
   $mail6 = 'flodc@gmail.com';
 
   //template $sth6 appartient à la classe PDOStatement
-  $sth6 = $dbco->prepare("
-		INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Pays,Mail)
-			VALUES (:nom6, :prenom6, :adresse6, :ville6, :cp6, :pays6, :mail6)
+  $sth6 = $dbco->prepare("INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Age,Mail)
+		VALUES (:nom6, :prenom6, :adresse6, :ville6, :cp6, :age6, :mail6)
 	"); //marqueurs nommés
   $sth6->execute([
     ':nom6' => $nom6,
@@ -185,7 +184,7 @@ try {
     ':adresse6' => $adresse6,
     ':ville6' => $ville6,
     ':cp6' => $cp6,
-    ':pays6' => $pays6,
+    ':age6' => $age6,
     ':mail6' => $mail6,
   ]);
   echo 'Entrée ajoutée dans la table<br>';
@@ -201,14 +200,13 @@ try {
   $adresse7 = 'Rue du Chene';
   $ville7 = 'Metz';
   $cp7 = 57000;
-  $pays7 = 'France';
+  $age7 = 29;
   $mail7 = 'duboistom@gmail.com';
 
-  $sth7 = $dbco->prepare("
-			INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Pays,Mail)
-			VALUES (?, ?, ?, ?, ?, ?, ?)
+  $sth7 = $dbco->prepare("INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Age,Mail)
+		VALUES (?, ?, ?, ?, ?, ?, ?)
 	");
-  $sth7->execute([$nom7, $prenom7, $adresse7, $ville7, $cp7, $pays7, $mail7]);
+  $sth7->execute([$nom7, $prenom7, $adresse7, $ville7, $cp7, $age7, $mail7]);
   echo 'Entrée ajoutée dans la table<br>';
 } catch (PDOException $e) {
   echo 'Erreur : ' . $e->getMessage() . '<br>';
@@ -222,13 +220,12 @@ try {
   $adresse8 = 'Rue du Chene';
   $ville8 = 'Metz';
   $cp8 = 57000;
-  $pays8 = 'France';
+  $age8 = 25;
   $mail8 = 'lauradb@gmail.com';
 
   //$sth appartient à la classe PDOStatement
-  $sth8 = $dbco->prepare("
-		INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Pays,Mail)
-			VALUES (:nom8, :prenom8, :adresse8, :ville8, :cp8, :pays8, :mail8)
+  $sth8 = $dbco->prepare("INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Age,Mail)
+		VALUES (:nom8, :prenom8, :adresse8, :ville8, :cp8, :age8, :mail8)
 	");
   //La constante de type par défaut est STR
   $sth8->bindValue(':nom8', $nom8); //associe directement une valeur à un paramètre
@@ -236,7 +233,7 @@ try {
   $sth8->bindValue(':adresse8', $adresse8);
   $sth8->bindValue(':ville8', $ville8);
   $sth8->bindValue(':cp8', $cp8, PDO::PARAM_INT);
-  $sth8->bindValue(':pays8', $pays8);
+  $sth8->bindValue(':age8', $age8);
   $sth8->bindValue(':mail8', $mail8);
   $sth8->execute();
   echo 'Entrée ajoutée dans la table<br>';
@@ -252,19 +249,18 @@ try {
   $adresse9 = 'Rue des Cerisiers';
   $ville9 = 'Rouen';
   $cp9 = 76000;
-  $pays9 = 'France';
+  $age9 = 38;
   $mail9 = 'mathplz@gmail.com';
 
-  $sth9 = $dbco->prepare("
-		INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Pays,Mail)
-			VALUES (?, ?, ?, ?, ?, ?, ?)
+  $sth9 = $dbco->prepare("INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Age,Mail)
+		VALUES (?, ?, ?, ?, ?, ?, ?)
 	");
   $sth9->bindValue(1, $nom9); //associe directement une valeur à un paramètre
   $sth9->bindValue(2, $prenom9);
   $sth9->bindValue(3, $adresse9);
   $sth9->bindValue(4, $ville9);
   $sth9->bindValue(5, $cp9, PDO::PARAM_INT);
-  $sth9->bindValue(6, $pays9);
+  $sth9->bindValue(6, $age9);
   $sth9->bindValue(7, $mail9);
   $sth9->execute();
   echo 'Entrée ajoutée dans la table<br>';
@@ -280,19 +276,18 @@ try {
   $adresse10 = 'Rue des Bouchers';
   $ville10 = 'Toulouse';
   $cp10 = 31000;
-  $pays10 = 'France';
+  $age10 = 19;
   $mail10 = 'jbb@gmail.com';
 
-  $sth10 = $dbco->prepare("
-		INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Pays,Mail)
-			VALUES (:nom10, :prenom10, :adresse10, :ville10, :cp10, :pays10, :mail10)
+  $sth10 = $dbco->prepare("INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Age,Mail)
+		VALUES (:nom10, :prenom10, :adresse10, :ville10, :cp10, :age10, :mail10)
 	");
   $sth10->bindParam(':nom10', $nom10);
   $sth10->bindParam(':prenom10', $prenom10);
   $sth10->bindParam(':adresse10', $adresse10);
   $sth10->bindParam(':ville10', $ville10);
   $sth10->bindParam(':cp10', $cp10, PDO::PARAM_INT); //attend execute pour être associé
-  $sth10->bindParam(':pays10', $pays10);
+  $sth10->bindParam(':age10', $age10);
   $sth10->bindParam(':mail10', $mail10);
   $cp10 = 31001; //la dernière valeur avant execute sera prise en compte
   $sth10->execute();
@@ -309,19 +304,18 @@ try {
   $adresse11 = 'Impasse des sans Noms';
   $ville11 = 'Nantes';
   $cp11 = 44000;
-  $pays11 = 'France';
+  $age11 = 45;
   $mail11 = 'philou@gmail.com';
 
-  $sth11 = $dbco->prepare("
-			INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Pays,Mail)
-			VALUES (?, ?, ?, ?, ?, ?, ?)
+  $sth11 = $dbco->prepare("INSERT INTO Clients(Nom,Prenom,Adresse,Ville,Codepostal,Age,Mail)
+		VALUES (?, ?, ?, ?, ?, ?, ?)
 	");
   $sth11->bindParam(1, $nom11); //attend execute pour être associé
   $sth11->bindParam(2, $prenom11);
   $sth11->bindParam(3, $adresse11);
   $sth11->bindParam(4, $ville11);
   $sth11->bindParam(5, $cp11, PDO::PARAM_INT);
-  $sth11->bindParam(6, $pays11);
+  $sth11->bindParam(6, $age11);
   $sth11->bindParam(7, $mail11);
   $sth11->execute();
   echo 'Entrée ajoutée dans la table<br>';
@@ -336,8 +330,7 @@ try {
 
 try {
   //On prépare la requête et on l'exécute
-  $sthUpdt = $dbco->prepare("
-		UPDATE Clients
+  $sthUpdt = $dbco->prepare("UPDATE Clients
 		SET mail='victor.durand@edhec.com'
 		WHERE id=2
 	");
@@ -355,9 +348,8 @@ try {
 
 // Ajouter une colonne (ADD)
 try {
-  $sqlAddCol = "
-		ALTER TABLE Clients
-		ADD Age INT(3) UNSIGNED
+  $sqlAddCol = "ALTER TABLE Clients
+		ADD AgeCol INT(3) UNSIGNED
 	";
 
   $dbco->exec($sqlAddCol);
@@ -368,9 +360,8 @@ try {
 
 // Supprimer une colonne (DROP COLUMN)
 try {
-  $sqlDelCol = "
-		ALTER TABLE Clients
-		DROP COLUMN Age
+  $sqlDelCol = "ALTER TABLE Clients
+		DROP COLUMN AgeCol
 	";
 
   $dbco->exec($sqlDelCol);
@@ -382,8 +373,7 @@ try {
 // Modifier une colonne (MODIFY COLUMN)
 
 try {
-  $sqlModCol = "
-		ALTER TABLE Clients
+  $sqlModCol = "ALTER TABLE Clients
 		MODIFY COLUMN Prenom VARCHAR(50)
 	";
 
@@ -455,23 +445,24 @@ ______________________________*/
 
 
 /*______________________________
-Id	Nom			Prenom		Adresse						Ville			CP			Pays		Mail												DateInscription
+Id	Nom			Prenom		Adresse						Ville			CP			Age		Mail												DateInscription
 
-1		Giraud	Pierre		Quai d'Europe			Toulon		83000		France	pierre.giraud@edhec.com			2024-11-15 17:49:49
-2		Durand 	Victor 		Rue des Acacias 	Brest 		29200 	France 	victor.durand@edhec.com 		2024-11-15 17:49:49
-3 	Julia 	Joly 			Rue du Hameau 		Lyon 			69001 	France 	july@gmail.com 							2024-11-15 17:49:49
-4 	Doe 		John 			Rue des Lys 			Nantes 		44000 	France 	j.doe@gmail.com 						2024-11-15 17:49:49
-5 	Dupont 	Jean 			Bvd Original 			Bordeaux 	33000 	France 	jd@gmail.com 								2024-11-15 17:49:49
-6 	Dechand Flo 			Rue des Moulins 	Marseille 13001 	France 	flodc@gmail.com 						2024-11-15 17:49:49
-9 	Palaz 	Mathilde 	Rue des Cerisiers Rouen 		76000 	France 	mathplz@gmail.com 					2024-11-15 17:49:49
-10 	Bombeur Jean 			Rue des Bouchers 	Toulouse 	31001 	France 	jbb@gmail.com 							2024-11-15 17:49:49
-11 	Gérard 	Philippe 	Impasse sans Nom 	Nantes 		44000 	France 	philou@gmail.com 						2024-11-15 17:49:49
+1		Giraud	Pierre		Quai d'Europe			Toulon		83000		29		pierre.giraud@edhec.com			2024-11-15 17:49:49
+2		Durand 	Victor 		Rue des Acacias 	Brest 		29200 	34 		victor.durand@edhec.com 		2024-11-15 17:49:49
+3 	Julia 	Joly 			Rue du Hameau 		Lyon 			69001 	21 		july@gmail.com 							2024-11-15 17:49:49
+4 	Doe 		John 			Rue des Lys 			Nantes 		44000 	29 		j.doe@gmail.com 						2024-11-15 17:49:49
+5 	Dupont 	Jean 			Bvd Original 			Bordeaux 	33000 	45 		jd@gmail.com 								2024-11-15 17:49:49
+6 	Dechand Flo 			Rue des Moulins 	Marseille 13001 	29 		flodc@gmail.com 						2024-11-15 17:49:49
+9 	Palaz 	Mathilde 	Rue des Cerisiers Rouen 		76000 	38 		mathplz@gmail.com 					2024-11-15 17:49:49
+10 	Bombeur Jean 			Rue des Bouchers 	Toulouse 	31001 	19 		jbb@gmail.com 							2024-11-15 17:49:49
+11 	Gérard 	Philippe 	Impasse sans Nom 	Nantes 		44000 	45 		philou@gmail.com 						2024-11-15 17:49:49
 ______________________________*/
 
 //
 ////////// SELECTION SIMPLE (SELECT)
 
 try {
+  echo 'Affiche les colonnes prenom et mail';
   $sthSel = $dbco->prepare('SELECT prenom, mail FROM Clients');
   //SELECT * FROM Clients pour récupérer toutes les données
   $sthSel->execute(); // classe PDOStatement
@@ -488,6 +479,7 @@ echo '<hr>';
 //// Que les valeurs uniques, sans les doublons (DISTINCT)
 
 try {
+  echo 'Prénoms sans les doublons';
   $sthUni = $dbco->prepare('SELECT DISTINCT prenom FROM Clients');
   $sthUni->execute();
 
@@ -504,9 +496,8 @@ echo '<hr>';
 //// Trier selon un ordre (ORDER BY)
 
 try {
-  //Tri croissant par prénoms puis décroissant par noms
-  $sthTri = $dbco->prepare('
-		SELECT prenom, nom
+  echo 'Tri croissant par prénoms puis décroissant par noms';
+  $sthTri = $dbco->prepare('SELECT prenom, nom
 		FROM Clients
 		ORDER BY prenom ASC, nom DESC
 	');
@@ -528,9 +519,8 @@ echo '<hr>';
 //// WHERE
 
 try {
-  //On sélectionne tous les clients dont le nom = Jean
-  $sthJean = $dbco->prepare("
-		SELECT prenom, nom, mail
+  echo 'Sélectionne tous les clients dont le nom = Jean';
+  $sthJean = $dbco->prepare("SELECT prenom, nom, mail
 		FROM clients
 		WHERE prenom = 'Jean'
 	");
@@ -549,10 +539,9 @@ echo '<hr>';
 //// Opérateurs AND OR NOT
 
 try {
-  /*Sélectionne tous les users dont l'id est spérieur à 4
-   *ET dont soit le prénom n'est pas Jean OU soit le nom est Bombeur*/
-  $sthOp = $dbco->prepare("
-		SELECT prenom, nom, mail
+  echo "Sélectionne tous les users dont l'id est spérieur à 4
+   ET dont soit le prénom n'est pas Jean OU soit le nom est Bombeur";
+  $sthOp = $dbco->prepare("SELECT prenom, nom, mail
 		FROM clients
 		WHERE id > 4 AND NOT prenom = 'Jean' OR nom = 'Bombeur'
 	"); //id AND (NOT prenom OR nom)
@@ -571,9 +560,8 @@ echo '<hr>';
 //// LIMIT et OFFSET
 
 try {
-  /*Sélectionne 2 résultats à partir de la 4è entrée de la table*/
-  $sthLim = $dbco->prepare("
-		SELECT prenom, nom, mail
+  echo 'Sélectionne 2 résultats à partir de la 4è entrée de la table';
+  $sthLim = $dbco->prepare("SELECT prenom, nom, mail
 		FROM clients
 		LIMIT 2 OFFSET 3
 	"); //1ere entrée = OFFSET 0
@@ -604,9 +592,8 @@ p_%		Cherche des valeurs de 2 caractères ou plus qui commencent par «p»
 ______________________________*/
 
 try {
-  //Cherche tous les prénoms de 4 lettres commençant par "Jo"
-  $sthLike = $dbco->prepare("
-		SELECT prenom, nom, mail
+  echo 'Cherche tous les prénoms de 4 lettres commençant par "Jo"';
+  $sthLike = $dbco->prepare("SELECT prenom, nom, mail
 		FROM clients
 		WHERE prenom LIKE 'Jo__'
 	");
@@ -625,28 +612,26 @@ echo '<hr>';
 //// IN et BETWEEN
 
 try {
-  //Cherche tous les utilisateurs dont le prénom est Jean ou John
-  $sthIn = $dbco->prepare("
-		SELECT prenom, nom, mail
+  echo 'Cherche tous les utilisateurs dont le prénom est Jean ou John';
+  $sthIn = $dbco->prepare("SELECT prenom, nom, mail
 		FROM clients
 		WHERE prenom IN ('Jean', 'John')
 	");
   $sthIn->execute();
+  $resultatIn = $sthIn->fetchAll(PDO::FETCH_ASSOC);
+  echo '<pre>';
+  print_r($resultatIn);
+  echo '</pre>';
 
-  //Cherche les noms entre G et Julia (inclus)
-  $sthBet = $dbco->prepare("
-		SELECT prenom, nom
+  echo 'Cherche les noms entre G et Julia (inclus)';
+  $sthBet = $dbco->prepare("SELECT prenom, nom
 		FROM clients
 		WHERE nom BETWEEN 'G' AND 'Julia'
 		ORDER BY nom ASC
 	");
   $sthBet->execute();
-
-  $resultatIn = $sthIn->fetchAll(PDO::FETCH_ASSOC);
   $resultatBet = $sthBet->fetchAll(PDO::FETCH_ASSOC);
-
   echo '<pre>';
-  print_r($resultatIn);
   print_r($resultatBet);
   echo '</pre>';
 } catch (PDOException $e) {
@@ -664,6 +649,132 @@ echo '<hr>';
 ////////// FONCTIONS D'AGRÉGATIONS min, max, count, avg, sum
 
 //// min et max
+
+//Sélectionne la valeur la plus petite dans la colonne age
+$sthMin = $dbco->prepare('SELECT MIN(Age), MAX(Age) FROM clients');
+$sthMin->execute();
+$resultatMin = $sthMin->fetch(PDO::FETCH_ASSOC); //ne renvoie qu'une valeur
+echo '<pre>';
+print_r($resultatMin); //[MIN(Age)] => 19 [MAX(Age)] => 45
+echo '</pre>';
+echo '<br>';
+
+//// count (nb de valeurs dans une colonne)
+
+//Retourne le nb d'utiilsateurs qui ont plus de 30 ans
+$sthCount = $dbco->prepare("SELECT COUNT(age)
+FROM clients
+WHERE age > 30
+");
+$sthCount->execute();
+$resultatCount = $sthCount->fetch(PDO::FETCH_ASSOC);
+print_r($resultatCount); //[COUNT(age)] => 5
+echo '<br>' . $resultatCount['COUNT(age)'] . '<br>';
+
+//// avg (valeur moyenne d'une colonne)
+
+$sthAvg = $dbco->prepare('SELECT AVG(age) FROM clients');
+$sthAvg->execute();
+$resultatAvg = $sthAvg->fetch(PDO::FETCH_ASSOC);
+print_r($resultatAvg); //[AVG(age)] => 31.5556
+echo '<br>';
+
+//// sum (somme des valeurs d'une colonne)
+$sthSum = $dbco->prepare('SELECT SUM(age) FROM clients');
+$sthSum->execute();
+$resultatSum = $sthSum->fetch(PDO::FETCH_ASSOC);
+print_r($resultatSum); //[SUM(age)] => 284
+echo '<br>';
+
+//
+////////// FONCTIONS SCALAIRES lcase ucase length round now
+
+//// lcase (minuscule) et ucase (majuscule)
+
+//Retourne les prénoms en majuscules
+$sthUc = $dbco->prepare("SELECT UCASE(nom) FROM clients WHERE prenom='Jean'");
+$sthUc->execute();
+$resultatUc = $sthUc->fetchAll(PDO::FETCH_ASSOC);
+print_r($resultatUc); //DUPONT, BOMBEUR
+echo '<br>';
+
+//// length en bytes (octets)
+
+$sthLen = $dbco->prepare("SELECT prenom, LENGTH(prenom)
+	FROM clients
+	WHERE id = 1
+");
+$sthLen->execute();
+$resultatLen = $sthLen->fetch(PDO::FETCH_ASSOC);
+print_r($resultatLen); //Pierre, 6
+echo '<br>';
+
+//// round (arrondir)
+
+//On arrondie 2.55 à 1 décimale
+$sthRou = $dbco->prepare('SELECT ROUND(2.55, 1)');
+$sthRou->execute();
+$resultatRou = $sthRou->fetch(PDO::FETCH_ASSOC);
+print_r($resultatRou);
+echo '<br>';
+
+//// now (date courante)
+
+/*Retourne les prénoms avec la date d'extraction*/
+$sthNow = $dbco->prepare('SELECT prenom, NOW() 
+	FROM clients WHERE prenom = "Jean"');
+$sthNow->execute();
+$resultatNow = $sthNow->fetchAll(PDO::FETCH_ASSOC);
+print_r($resultatNow); //[prenom] => Jean [NOW()] => 2024-11-18 15:14:20
+echo '<br><hr>';
+
+//
+////////// FONCTIONS D'AGRÉGATIONS ET CRITÈRES DE SÉLECTIONS
+
+//// GROUP BY (groupe les résultats dans une colonne)
+
+echo "Affiche le nombre d'occurence pour chaque age";
+$sthGrp = $dbco->prepare("SELECT COUNT(id), age 
+	FROM clients
+	GROUP BY age 
+	ORDER BY COUNT(id) DESC
+	LIMIT 3 OFFSET 0
+");
+$sthGrp->execute();
+$resultatGrp = $sthGrp->fetchAll(PDO::FETCH_ASSOC);
+echo '<pre>';
+print_r($resultatGrp);
+echo '</pre>';
+
+/* La colonne des 29 a 3 entrées
+COUNT(id)	age
+3					29
+2					45
+...*/
+echo '<br><hr>';
+
+//// HAVING (WHERE pour les fonctions d'agrégations)
+
+echo 'Affiche les prénoms qui reviennent plusieurs fois';
+$sthHav = $dbco->prepare("SELECT COUNT(id), prenom 
+	FROM clients
+	GROUP BY prenom
+	HAVING COUNT(id) > 1
+	ORDER BY prenom
+");
+$sthHav->execute();
+$resultatHav = $sthHav->fetchAll(PDO::FETCH_ASSOC);
+echo '<pre>';
+print_r($resultatHav); //2 Jean
+echo '</pre>';
+echo '<br>';
+?>
+
+<!-- ---------------------------------- -->
+<h2>JOINTURES, UNIONS ET SOUS REQUETES</h2>
+<!-- ---------------------------------- -->
+<?php
+//
 ?>
     </body>
 </html>
