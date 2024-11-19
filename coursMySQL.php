@@ -773,8 +773,200 @@ echo '<br>';
 <!-- ---------------------------------- -->
 <h2>JOINTURES, UNIONS ET SOUS REQUETES</h2>
 <!-- ---------------------------------- -->
+<?php //
+
+
+// ALIAS: on peut renommer une colonne d'une table avec AS pour la retrouver plus facilement (pas dans WHERE)
+
+try {
+  //Création de la table comments
+  $commentsTb = "CREATE TABLE comments(
+		id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+		userId INT DEFAULT 0,
+		contenu TEXT NOT NULL,
+		dateComment TIMESTAMP
+	)";
+  $dbco->exec($commentsTb);
+
+  $sthCo = $dbco->prepare("INSERT INTO comments(userId, contenu, dateComment)
+		VALUES (:userId, :contenu, :dateC)
+		");
+  $sthCo->bindParam(':userId', $userId);
+  $sthCo->bindParam(':contenu', $contenu);
+  $sthCo->bindParam(':dateC', $dateC);
+
+  //Insère des entrées avec des valeurs personnalisées
+  $userId = 1;
+  $contenu = 'Super site, merci !';
+  $dateC = '2018-05-08 18:29:03';
+  $sthCo->execute();
+  $userId = 3;
+  $contenu = 'Bon cours';
+  $dateC = '2018-05-12 13:29:06';
+  $sthCo->execute();
+  $userId = 1;
+  $contenu = 'Ce cours est dur...';
+  $dateC = '2018-05-19 15:17:38';
+  $sthCo->execute();
+  $userId = 0;
+  $contenu = 'Bon prof !';
+  $dateC = '2018-05-24 08:31:03';
+  $sthCo->execute();
+  $userId = 2;
+  $contenu = 'Super contenu !';
+  $dateC = '2018-06-04 10:49:17';
+  $sthCo->execute();
+  $userId = 1;
+  $contenu = "J'ai appris à dév";
+  $dateC = '2018-06-07 17:29:33';
+  $sthCo->execute();
+  echo 'Table comments created.<br>';
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage() . '<br>';
+}
+echo '<br>';
+
+//
+////////// JOINTURES
+
+//// INNER JOIN (valeurs identiques dans les 2 tables)
+
+echo "On associe les prénoms de clients et les contenus de comments pour les valeurs de id et userId équivalents.<br>
+Ainsi, le contenu du userId 2 de comments (Super contenu !) est attribué au prénom du id 2 de clients (Victor)";
+/*Les commentaires sans clients ET les clients qui n’ont pas commenté seront exclus des résultats renvoyés.*/
+$sthIJ = $dbco->prepare("SELECT clients.prenom, comments.contenu
+	FROM clients
+	INNER JOIN comments ON clients.id = comments.userId
+");
+$sthIJ->execute();
+$resultatIJ = $sthIJ->fetchAll(PDO::FETCH_ASSOC);
+echo '<pre>';
+print_r($resultatIJ);
+echo '</pre>';
+
+echo '<br><hr>';
+
+//// LEFT OUTER JOIN
+
+echo "Cette fois-ci tous les clients sont affichés (table à gauche de LEFT) avec leur commentaire, même ceux qui n'ont pas de commentaires (restera vide)";
+$sthLOJ = $dbco->prepare("SELECT clients.prenom, clients.nom, comments.contenu
+	FROM clients
+	LEFT OUTER JOIN comments ON clients.id = comments.userId
+/*WHERE comments.userId IS NULL // pour afficher seulement les clients sans commentaires*/
+");
+$sthLOJ->execute();
+$resultatLOJ = $sthLOJ->fetchAll(PDO::FETCH_ASSOC);
+echo '<pre>';
+print_r($resultatLOJ);
+echo '</pre>';
+echo '<br><hr>';
+
+//// RIGHT OUTER JOIN
+
+echo "Tous les commentaires seront affichés (table à droite de RIGHT) même ceux qui n'ont pas de clients identifiés";
+$sthROJ = $dbco->prepare("SELECT clients.prenom, clients.nom, comments.contenu
+	FROM clients
+	RIGHT OUTER JOIN comments ON clients.id = comments.userId
+/*WHERE clients.id IS NULL // pour afficher seulement les commentaires sans clients*/
+");
+$sthROJ->execute();
+$resultatROJ = $sthROJ->fetchAll(PDO::FETCH_ASSOC);
+echo '<pre>';
+print_r($resultatROJ);
+echo '</pre>';
+echo '<br><hr>';
+
+//// SELF JOIN
+/* On peut joindre une table avec elle même (lien hiérarchique entre 2 colonnes par exemple). Il faudra pour cela utilisé des alias pour faire semblant d'avoir 2 tables différentes
+
+SELECT e.nom AS nom_employe, m.nom AS nom_manager
+FROM employes AS e
+LEFT OUTER JOIN employes AS m
+ON e.manager_id = m.id*/
+
+//
+////////// UNION
+
+/* Combine le résultat de deux déclarations SELECT avec le même nombre de colonnes et le même type de données, sans les doublons
+UNION ALL pour inclure les doublons.
+
+SELECT nom, prenom FROM employes
+UNION 
+SELECT nom, prenom FROM users */
+
+//// FULL OUTER JOIN = LEFT JOIN + RIGHT JOIN
+
+echo 'Récupère toutes les données pour les colonnes sélectionnées de chacune des deux tables';
+
+$sthFOJ = $dbco->prepare(
+  "SELECT u.prenom, u.nom, c.contenu, c.dateComment 	
+	FROM clients AS u
+	LEFT JOIN comments AS c ON u.id = c.userId
+	UNION ALL
+	SELECT u.prenom, u.nom, c.contenu, c.dateComment FROM clients AS u
+	RIGHT JOIN comments AS c ON u.id = c.userId
+	WHERE u.id IS NULL /*seulement les commentaires sans clients sinon ça fera doublon*/
+"
+);
+$sthFOJ->execute();
+$resultatFOJ = $sthFOJ->fetchAll(PDO::FETCH_ASSOC);
+echo '<pre>';
+print_r($resultatFOJ);
+echo '</pre>';
+echo '<br><hr>';
+
+//
+////////// SOUS REQUETE EXISTS ANY ALL
+
+//// EXISTS
+
+echo "Test l'existence d'une entrée -> true si trouvé.<br>Renvoie les informations de chaque client qui a commenté";
+$sthEx = $dbco->prepare("SELECT * FROM clients
+WHERE EXISTS (SELECT * FROM comments WHERE comments.userId = clients.id)
+");
+$sthEx->execute();
+$resultatEx = $sthEx->fetchAll(PDO::FETCH_ASSOC);
+
+echo '<pre>';
+print_r($resultatEx);
+echo '</pre>';
+echo '<br><hr>';
+
+//// ANY
+
+echo 'permet de comparer une valeur avec le résultat d’une sous-requête.<br>Renvoie le prenom des clients qui ont écrit au moins un commentaire après le 18 mai 2018 à midi (si au moins un client à écrit un commentaire depuis cette date).';
+$sthAny = $dbco->prepare("SELECT prenom FROM clients
+	WHERE id = ANY (SELECT userId FROM comments WHERE dateComment > '2018-05-18 12:00:00') /* la requête s'exécute si ANY et true (une seule entrée doit être valide) */
+");
+/* Il faut lire la requête à l'envers: 
+- On affiche d'abord une colonne de userId des comments dont les commentaires sont supérieurs à une certaine date
+- On affiche une colonne de prenom des clients issus de la 1ere requête*/
+$sthAny->execute();
+$resultatAny = $sthAny->fetchAll(PDO::FETCH_ASSOC);
+echo '<pre>';
+print_r($resultatAny);
+echo '</pre>';
+echo '<br><hr>';
+
+//// ALL
+
+echo "Toutes les valeurs de la requête doivent satisfaire la condition posée.<br>Affiche les prénom des clients qui ont écrit au moins un commentaire après le 18 mai 2018 à midi (si chacun d'entre eux a écrit un commentaire depuis cette date).";
+$sthAll = $dbco->prepare("SELECT prenom FROM clients
+	WHERE id = ALL (SELECT userId FROM comments WHERE dateComment > '2018-05-18 12:00:00') /* Toutes les entrées doivent vérifier la condition */
+");
+$sthAll->execute();
+$resultatAll = $sthAll->fetchAll(PDO::FETCH_ASSOC);
+echo '<pre>';
+print_r($resultatAll); //tableau vide car toutes les entrées ne vérifient pas la sous requête
+echo '</pre>';
+?>
+
+<!-- ---------------------------- -->
+<h2>GESTION DES FORMULAIRES HTML</h2>
+<!-- ---------------------------- -->
 <?php
 //
 ?>
     </body>
 </html>
+
