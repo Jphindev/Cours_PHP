@@ -447,6 +447,11 @@
 					"line": 2490,
 					"column": 50,
 					"label": ""
+				},
+				{
+					"line": 2562,
+					"column": 38,
+					"label": ""
 				}
 			]
 		},
@@ -454,103 +459,113 @@
 			"path": "coursMySQL.php",
 			"bookmarks": [
 				{
-					"line": 9,
+					"line": 10,
 					"column": 39,
 					"label": ""
 				},
 				{
-					"line": 13,
+					"line": 14,
 					"column": 32,
 					"label": ""
 				},
 				{
-					"line": 57,
+					"line": 58,
 					"column": 29,
 					"label": ""
 				},
 				{
-					"line": 77,
+					"line": 78,
 					"column": 31,
 					"label": ""
 				},
 				{
-					"line": 105,
+					"line": 106,
 					"column": 32,
 					"label": ""
 				},
 				{
-					"line": 114,
+					"line": 115,
 					"column": 20,
 					"label": ""
 				},
 				{
-					"line": 163,
+					"line": 164,
 					"column": 40,
 					"label": ""
 				},
 				{
-					"line": 326,
+					"line": 327,
 					"column": 24,
 					"label": ""
 				},
 				{
-					"line": 386,
+					"line": 387,
 					"column": 36,
 					"label": ""
 				},
 				{
-					"line": 441,
+					"line": 442,
 					"column": 29,
 					"label": ""
 				},
 				{
-					"line": 461,
+					"line": 462,
 					"column": 27,
 					"label": ""
 				},
 				{
-					"line": 516,
+					"line": 517,
 					"column": 32,
 					"label": ""
 				},
 				{
-					"line": 642,
+					"line": 643,
 					"column": 45,
 					"label": ""
 				},
 				{
-					"line": 648,
+					"line": 649,
 					"column": 60,
 					"label": ""
 				},
 				{
-					"line": 689,
+					"line": 690,
 					"column": 59,
 					"label": ""
 				},
 				{
-					"line": 731,
+					"line": 732,
 					"column": 60,
 					"label": ""
 				},
 				{
-					"line": 773,
+					"line": 774,
 					"column": 43,
 					"label": ""
 				},
 				{
-					"line": 829,
+					"line": 830,
 					"column": 20,
 					"label": ""
 				},
 				{
-					"line": 887,
+					"line": 888,
 					"column": 16,
 					"label": ""
 				},
 				{
-					"line": 918,
+					"line": 919,
 					"column": 38,
+					"label": ""
+				},
+				{
+					"line": 965,
+					"column": 37,
+					"label": ""
+				},
+				{
+					"line": 1021,
+					"column": 40,
 					"label": ""
 				}
 			]

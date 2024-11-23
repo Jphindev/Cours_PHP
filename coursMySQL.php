@@ -5,6 +5,7 @@
         <meta charset="utf-8">
     </head>
     <body>
+				<a href=#signet>Jump</a>
         <h1>MySQL</h1>  
 <!-- ------------------------------ -->
 <h2>BASE DE DONNÉES MYSQL AVEC PDO</h2>
@@ -964,9 +965,138 @@ echo '</pre>';
 <!-- ---------------------------- -->
 <h2>GESTION DES FORMULAIRES HTML</h2>
 <!-- ---------------------------- -->
-<?php
+
+<!-- On sécurise les données que l'on peut coté navigateur avec des attributs dans les input -->
+				<form action="coursMySQL.php" method="post">
+					<div class="c100">
+						<label for="prenom">Prénom : </label>
+						<input type="text" id="prenom" name="prenom" required pattern="^[A-Za-z '-]+$" maxlength="20">
+					</div>
+					<div class="c100">
+						<label for="mail">Email : </label>
+						<input type="email" id="mail" name="mail" required pattern="^[A-Za-z]+@{1}[A-Za-z]+\.{1}[A-Za-z]{2,}$">
+					</div>
+					<div class="c100">
+						<label for="age">Age : </label>
+						<input type="number" id="age" name="age" min="12" max="99">
+					</div>
+					<div class="c100">
+						<input type="radio" id="femme" name="sexe" value="femme">
+						<label for="femme">Femme</label>
+						<input type="radio" id="homme" name="sexe" value="homme">
+						<label for="homme">Homme</label>
+						<input type="radio" id="autre" name="sexe" value="autre">
+						<label for="autre">Autre</label>
+					</div>
+					<div class="c100">
+						<label for="pays">Pays de résidence :</label>
+						<select id="pays" name="pays">
+							<optgroup label="Europe">
+								<option value="france">France</option>
+								<option value="belgique">Belgique</option>
+								<option value="suisse">Suisse</option>
+							</optgroup>
+							<optgroup label="Afrique">
+								<option value="algerie">Algérie</option>
+								<option value="tunisie">Tunisie</option>
+								<option value="maroc">Maroc</option>
+								<option value="madagascar">Madagascar</option>
+								<option value="benin">Bénin</option>
+								<option value="togo">Togo</option>
+							</optgroup>
+							<optgroup label="Amerique">
+								<option value="canada">Canada</option>
+							</optgroup>
+						</select>
+					</div>
+					<div class="c100" id="submit">
+						<input type="submit" value="Envoyer">
+					</div>
+        </form>
+<?php //
+
+
+echo '<br>';
+
+//
+////////// SUPERGLOBALES $_POST ET $_GET
+
+//// Affichage simple des données reçues
+
+/* Les données vont être traité dans la page spécifiée (action=) du formulaire */
+echo 'Prénom : ' . $_POST['prenom'] . '<br>';
+echo 'Email : ' . $_POST['mail'] . '<br>';
+echo 'Age : ' . $_POST['age'] . '<br>';
+echo 'Sexe : ' . $_POST['sexe'] . '<br>';
+echo 'Pays : ' . $_POST['pays'] . '<br><br>';
+
+/* Pour rediriger vers une autre page après traitement des données:
+ header('Location:merci.html'); */
+
+//// Manipulation et stockage des données
+
+try {
+  /*On se connecte à la BDD
+  $dbco = new PDO("mysql:host=$serveur;dbname=$dbname", $user, $pass);
+  $dbco->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); */
+
+  //On crée une table form
+  $form = "CREATE TABLE form(
+		id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+		prenom TEXT,
+		mail TEXT,
+		age INT,
+		sexe TEXT,
+		pays TEXT)";
+  $dbco->exec($form);
+} catch (PDOException $e) {
+  echo 'Erreur : ' . $e->getMessage();
+}
+// On nettoie les données coté serveur avant de les envoyer dans la base de données
+function valid_donnees($donnees)
+{
+  $donnees = trim($donnees); //supprime les espaces inutiles
+  $donnees = stripslashes($donnees); //supprime les antislashs
+  $donnees = htmlspecialchars($donnees); //pour échapper les caractères spéciaux
+  return $donnees;
+}
+$prenom = valid_donnees($_POST['prenom']);
+$mail = valid_donnees($_POST['mail']);
+$age = valid_donnees($_POST['age']);
+$sexe = valid_donnees($_POST['sexe']);
+$pays = valid_donnees($_POST['pays']);
+
+// On valide les données
+if (
+  !empty($prenom) &&
+  strlen($prenom) <= 20 &&
+  preg_match("^[A-Za-z '-]+$", $prenom) &&
+  !empty($mail) &&
+  filter_var($mail, FILTER_VALIDATE_EMAIL)
+) {
+  try {
+    //On insère les données reçues
+    $sthForm = $dbco->prepare("INSERT INTO form(prenom, mail, age, sexe, pays)
+    VALUES(:prenom, :mail, :age, :sexe, :pays)");
+    $sthForm->bindParam(':prenom', $prenom);
+    $sthForm->bindParam(':mail', $mail);
+    $sthForm->bindParam(':age', $age);
+    $sthForm->bindParam(':sexe', $sexe);
+    $sthForm->bindParam(':pays', $pays);
+    $sthForm->execute();
+
+    //On renvoie l'utilisateur vers la page de remerciement
+    header('Location:form-merci.html');
+  } catch (PDOException $e) {
+    echo 'Impossible de traiter les données. Erreur : ' . $e->getMessage();
+  }
+} else {
+  header('Location:coursPHP.php');
+}
+
 //
 ?>
+			<p id="signet">_____</p>
     </body>
 </html>
 
