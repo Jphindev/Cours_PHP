@@ -89,6 +89,11 @@ echo $prenom . " est mon prénom et j'ai " . $age . ' ans <br>'; //la meilleure
 // avec apostrophes et points sinon considéré comme une chaîne de caractères
 echo $prenom . ' est mon prénom et j\'ai ' . $age . ' ans <br>';
 
+// avec sprintf
+$formatSp = '%s est mon prénom et j\'ai %d ans.'; //%s = string, %d = digit
+echo sprintf($formatSp, $prenom, $age);
+echo '<br>';
+
 //
 ////////// OPÉRATEURS
 
@@ -550,12 +555,17 @@ Caractéristiques de Stickers :
 ______________________________*/
 
 //
-////////// AFFICHAGE RAPIDE D'UN TABLEAU
+////////// AFFICHAGE RAPIDE ET RECHERCHE DANS UN TABLEAU
 
 echo '<pre>'; //pour conserver la mise en forme du code
 print_r($produits); //pour un affichage simple
 var_dump($produits); //donne plus d'informations
 echo '</pre>';
+
+array_key_exists('model', $cars); //true - vérifie l'éxistence d'une clé dans un tableau
+in_array('Ford', $cars); //true - vérifie léxistence d'une valeur dans un tableau
+array_search('Mustang', $cars); //model - donne la clé d'une valeur si elle existe (sinon false)
+echo '<br>';
 
 //
 ////////// SORT
@@ -975,9 +985,11 @@ echo '<br><br>';
   <input type="submit" value="Upload Image" name="submit">
 </form>
 <?php
+//
+
 /*__upload.php__________________
 $target_dir = 'uploads/';
-$target_file = $target_dir . basename($_FILES['fileToUpload']['name']);
+$target_file = $target_dir . basename($_FILES['fileToUpload']['name']); //basename permet d'extraire le nom du fichier
 $uploadOk = 1;
 $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 

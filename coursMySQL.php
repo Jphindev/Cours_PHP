@@ -269,7 +269,7 @@ try {
   echo 'Erreur : ' . $e->getMessage() . '<br>';
 }
 
-//// avec bindParam et marqueurs nommés
+//// avec bindParam et marqueurs nommés (la meilleure)
 
 try {
   $nom10 = 'Bombeur'; //on pourrait écrire ces valeurs après bindParam
@@ -564,7 +564,7 @@ try {
   echo 'Sélectionne 2 résultats à partir de la 4è entrée de la table';
   $sthLim = $dbco->prepare("SELECT prenom, nom, mail
 		FROM clients
-		LIMIT 2 OFFSET 3
+		LIMIT 2 OFFSET 3 /* ou LIMIT 3, 2 */
 	"); //1ere entrée = OFFSET 0
   $sthLim->execute();
 
