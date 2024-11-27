@@ -646,24 +646,49 @@ date_default_timezone_set('Europe/Moscow'); //On choisit le fuseau horaire de Mo
 echo date('d m Y h:i:s') . '<br>'; //26 01 2019 12:19:41
 echo gmdate('d-m-Y h:i:s') . '<br>'; //26-01-2019 09:19:41
 
+/*__DEPRECATED__________________
 //// Transformer une date en français: setlocale() et strftime() /!\ deprecated
 echo strftime('%A %d %B %Y %I:%M:%S') . '<br>'; //Saturday 26 January 2019 10:22:04
 setlocale(LC_TIME, ['fr', 'fra', 'fr_FR']); //on active la localisation française
 date_default_timezone_set('Europe/Paris'); //on défini le fuseau horaire
 echo strftime('%A %d %B %Y %I:%M:%S') . '<br>'; //Samedi 26 Janvier 2019 10:22:04
 echo strftime('%c') . '<br>'; //Sam 26 jan 10:22:04 2019
+________________________________*/
+
+//// Date locale avec datefmt_format
+
+$fmt = datefmt_create(
+  'fr_FR',
+  IntlDateFormatter::FULL,
+  IntlDateFormatter::FULL,
+  'Europe/Paris',
+  IntlDateFormatter::GREGORIAN,
+  'EEEE d MMMM yyyy HH:mm:ss'
+  /* voir https://unicode-org.github.io/icu/userguide/format_parse/datetime/#date-field-symbol-table */
+);
+echo 'Avec datefmt_format: ' . datefmt_format($fmt, time()) . '<br>';
+
+//// Date locale avec IntlDateFormatter
+$fmtOO = new IntlDateFormatter(
+  'fr_FR',
+  IntlDateFormatter::FULL,
+  IntlDateFormatter::FULL,
+  'Europe/Paris',
+  IntlDateFormatter::GREGORIAN,
+  'EEEE d MMMM yyyy'
+);
+echo 'Avec IntlDateFormatter: ' . $fmt->format(time()) . '<br>';
 
 //
 ////////// COMPARER DES DATES
 
 // Il faut comparer les Timestamp et pas les dates
-setlocale(LC_TIME, ['fr', 'fra', 'fr_FR']);
-$d1 = '25-01-2019'; //on défini la date
-$d2 = '30-June 2018'; //un autre format
+$d1 = '25-01-2019 14:30:25'; //on défini la date
+$d2 = '30-June 2018 14:30:25'; //un autre format
 $tmstp1 = strtotime($d1); //on récupère le timestamp
 $tmstp2 = strtotime($d2);
-$dfr1 = strftime('%A %d %B %Y', $tmstp1); //on localise en français
-$dfr2 = strftime('%A %d %B %Y', $tmstp2);
+$dfr1 = datefmt_format($fmt, $tmstp1); //on localise en français
+$dfr2 = datefmt_format($fmt, $tmstp2);
 
 if ($tmstp1 < $tmstp2) {
   echo 'Le ' . $dfr1 . ' est avant le ' . $dfr2;
@@ -676,12 +701,14 @@ if ($tmstp1 < $tmstp2) {
 // Opérations sur les dates
 $d3 = strtotime('July 04');
 $d4 = ceil(($d3 - time()) / 60 / 60 / 24); //différence entre 2 date arrondie au supérieur, en jours
-echo 'There are ' . $d4 . ' days until 4th of July.';
+echo '<br>There are ' . $d4 . ' days until 4th of July.';
 
 //// checkdate() pour tester la validité d'une date
 checkdate(1, 25, 2019); //true – le 25 jan 2019 est une date valide
 checkdate(2, 29, 2015); //false – 2015 n'est pas une année bissextile
+echo '<br>';
 
+/*__DEPRECATED__________________
 //// strptime() pour tester une date locale /!\ deprecated
 setlocale(LC_TIME, ['fr', 'fra', 'fr_FR']);
 
@@ -709,6 +736,7 @@ if (strptime($date3, '%A %d %B %Y')) {
   print_r(strptime($date3, '%A %d %B %Y')); //false, les formats sont différents
   echo '</pre>';
 }
+________________________________*/
 
 /////////////////////////////////////////////////////////////
 ?>
@@ -727,11 +755,11 @@ function prez2()
 {
   $mail = 'pierre.giraud@edhec.com';
   echo 'Je suis ' .
-    $GLOBALS[prenom] .
+    $GLOBALS['prenom'] .
     ' ' .
-    $GLOBALS[nom] .
+    $GLOBALS['nom'] .
     ', j\'ai ' .
-    $GLOBALS[age] .
+    $GLOBALS['age'] .
     ' ans.<br>Mon adresse mail est : ' .
     $mail;
 }
@@ -2376,7 +2404,7 @@ $texte = '<strong>Pierre</strong>, 29 ans';
 echo $texte . '<br>';
 echo filter_var($texte, FILTER_SANITIZE_NUMBER_INT) . '<br>'; //29
 echo filter_var($texte, FILTER_SANITIZE_SPECIAL_CHARS) . '<br>'; //<strong>Pierre</strong>, 29 ans | affiche les balises html
-echo filter_var($texte, FILTER_SANITIZE_STRING) . '<br>'; //annule la balise <strong>
+echo filter_var($texte, FILTER_SANITIZE_STRING) . '<br>'; //annule la balise <strong> /!\ deprecated: utiliser htmlspecialchars()
 echo '<br>';
 
 //// Valider
