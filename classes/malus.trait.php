@@ -10,4 +10,3 @@ trait Malus
     return $this;
   }
 }
-?>

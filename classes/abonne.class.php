@@ -25,9 +25,9 @@ class SubInt implements UserInt
   public function setPrixAbo()
   {
     if ($this->user_age === 'mineur') {
-      return $this->prix_abo = Utilisateur::ABONNEMENT / 2;
+      return $this->prix_abo = UserInt::ABONNEMENT / 2;
     } else {
-      return $this->prix_abo = Utilisateur::ABONNEMENT;
+      return $this->prix_abo = UserInt::ABONNEMENT;
     }
   }
 }
@@ -52,4 +52,3 @@ class SubAbs extends UserAbs
     }
   }
 }
-?>

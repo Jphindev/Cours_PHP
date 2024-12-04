@@ -6,4 +6,3 @@ interface UserInt
   public function setPrixAbo();
   public function getPrixAbo();
 }
-?>

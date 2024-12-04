@@ -185,4 +185,3 @@ class Utilisateur_test
   public $user_name;
   public $user_pass;
 }
-?>

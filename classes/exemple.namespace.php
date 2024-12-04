@@ -27,7 +27,7 @@ namespace Exemple {
 
   use Exemple\Sous; //Revient à écrire use Exemple\Sous as Sous
   use Exemple\Sous\UserNS as Sousutil; //Alias d'une classe
-  use const Exemple\Sous\PAYS; //Importation d'une constante
+  use const Exemple\Sous\SOUSPAYS; //Importation d'une constante
 
   //Import et alias de plusieurs fonctions avec une instruction use
   use function Exemple\Sous\{bonsoir as ssbsr, bonjour as ssbjr};
@@ -35,7 +35,7 @@ namespace Exemple {
   var_dump($ssobj = new Sousutil()); //object(Exemple\Sous\UserNS)#26 (0) { }
   echo '<br>';
   ssbjr(); //Sous Bonjour
-  echo PAYS; //Sous France
+  echo SOUSPAYS; //Sous France
   echo '<br>';
   ssbsr(); //Sous Bonsoir
 }
@@ -51,4 +51,3 @@ namespace {
   }
   echo 'Namespace: ' . __NAMESPACE__ . '<br>'; //Namespace:  | n'affiche rien
 }
-?>

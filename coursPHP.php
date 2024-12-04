@@ -1352,9 +1352,9 @@ if (isset($_POST['pass'])) {
 
 /////////////////////////////////////////////////////////////
 ?>
-<!-- ---------------------------------------------------------- -->
-<h2>LES CONCEPTS DE BASE DE LA PROGRAMMATION ORIENTÉ OBJET PHP</h2>
-<!-- ---------------------------------------------------------- -->
+<!-- ---------------------------------- -->
+<h2>PROGRAMMATION ORIENTÉ OBJET EN PHP</h2>
+<!-- ---------------------------------- -->
 <?php
 //
 ////////// CLASSES, INSTANCES ET OBJETS
@@ -2404,7 +2404,7 @@ $texte = '<strong>Pierre</strong>, 29 ans';
 echo $texte . '<br>';
 echo filter_var($texte, FILTER_SANITIZE_NUMBER_INT) . '<br>'; //29
 echo filter_var($texte, FILTER_SANITIZE_SPECIAL_CHARS) . '<br>'; //<strong>Pierre</strong>, 29 ans | affiche les balises html
-echo filter_var($texte, FILTER_SANITIZE_STRING) . '<br>'; //annule la balise <strong> /!\ deprecated: utiliser htmlspecialchars()
+/*echo filter_var($texte, FILTER_SANITIZE_STRING) . '<br>'; //annule la balise <strong> /!\ deprecated: utiliser htmlspecialchars()*/
 echo '<br>';
 
 //// Valider
@@ -2448,7 +2448,7 @@ $options = ['options' => ['min_range' => 0, 'max_range' => 10]];
 var_dump(filter_var(5, 257, $options)); //int(5) | 5 est bien compris entre 0 et 10
 
 $strASCII = '<h1>Hello WorldÆØÅ!</h1>';
-var_dump(filter_var($strASCII, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH)); //enlèves les valeurs ASCII > 127
+/*var_dump(filter_var($strASCII, FILTER_SANITIZE_STRING(/!\ DEPRECATED -> htmlspecialchars), FILTER_FLAG_STRIP_HIGH)); //enlèves les valeurs ASCII > 127*/
 echo '<br><br><br>';
 
 //// Cas pratique: formulaire HTML
@@ -2516,12 +2516,15 @@ echo '<br><br>';
 echo $nbr2; //erreur car variable non définie
 
 //On peut configurer l'affichage d'une erreur
-set_error_handler(function ($niveau, $message, $fichier, $ligne) {
-  echo 'Erreur : ' . $message . '<br>';
-  echo 'Niveau de l\'erreur : ' . $niveau . '<br>';
-  echo 'Erreur dans le fichier : ' . $fichier . '<br>';
-  echo 'Emplacement de l\'erreur : ' . $ligne . '<br>';
-});
+error_reporting(E_ALL); //pour récupérer toutes les erreurs
+ini_set('display_errors', 0); //0: n'affiche rien dans le browser (plus sécurisé), 1: affiche les erreurs
+function customErrorHandler($errno, $errstr, $errfile, $errline)
+{
+  $errMsg = "Erreur : [$errno]: $errstr - $errfile : $errline<br>";
+  error_log($errMsg . PHP_EOL, 3, 'error_log.txt'); //les erreurs s'afficheront dans un fichier texte
+}
+
+set_error_handler('customErrorHandler');
 
 echo '<br>';
 echo $nbr3; //erreur avec affichage personnalisé
@@ -2569,11 +2572,11 @@ echo '<br><br>';
 
 //// CLASSE ERROR ET INTERFACE THROWABLE (depuis PHP 7)
 
-try {
+/*try {
   bonj(); //n'existe pas
 } catch (Error $e) {
   echo $e->getMessage(); //Call to undefined function bonj()
-}
+}*/
 
 echo '<br><br>';
 
@@ -2588,13 +2591,13 @@ echo '<br><br>';
 
 //// Finally
 
-//On exécute un code quelle que soit la situation
+/*//On exécute un code quelle que soit la situation
 try {
   bonj(); //n'existe pas
 } finally {
   echo 'Toujours affiché';
 }
-echo 'Non affiché ici car exception lancée et non capturée';
+echo 'Non affiché ici car exception lancée et non capturée';*/
 
 /////////////////////////////////////////////////////////////
 //

@@ -5,7 +5,7 @@ namespace Exemple\Sous {
     /*code*/
   }
   const VILLE = 'Sous Paris';
-  const PAYS = 'Sous France';
+  const SOUSPAYS = 'Sous France';
   function bonjour()
   {
     echo 'Sous Bonjour<br>';
@@ -15,4 +15,3 @@ namespace Exemple\Sous {
     echo 'Sous Bonsoir<br>';
   }
 }
-?>
